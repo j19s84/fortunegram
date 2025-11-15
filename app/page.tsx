@@ -1,77 +1,123 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import FortuneCard from '@/components/FortuneCard'
-import StarField from '@/components/StarField'
-import { getDailyFortune } from '@/lib/fortunes'
+import FortuneWheel, { type FortuneType } from '@/components/FortuneWheel'
+import ChoiceFlow from '@/components/ChoiceFlow'
+import FortuneDisplay from '@/components/FortuneDisplay'
+import DailyLimitNotice from '@/components/DailyLimitNotice'
+import { hasUsedFortune, markFortuneAsUsed } from '@/lib/dailyLimit'
+
+type PageState = 'welcome' | 'spinning' | 'choices' | 'result' | 'daily-limit'
 
 export default function Home() {
-  const [fortune, setFortune] = useState<string>('')
-  const [isLoading, setIsLoading] = useState(true)
-  const [newFortune, setNewFortune] = useState(false)
+  const [pageState, setPageState] = useState<PageState>('welcome')
+  const [selectedFortuneType, setSelectedFortuneType] = useState<FortuneType | null>(null)
+  const [selections, setSelections] = useState<Record<string, string>>({})
+  const [isSpinning, setIsSpinning] = useState(false)
+  const [hasUsedToday, setHasUsedToday] = useState(false)
 
   useEffect(() => {
-    const loadFortune = async () => {
-      setIsLoading(true)
-      const dailyFortune = getDailyFortune()
-      setFortune(dailyFortune)
-      setIsLoading(false)
+    // Check if user has already used their fortune today
+    const used = hasUsedFortune()
+    setHasUsedToday(used)
+    if (used) {
+      setPageState('daily-limit')
     }
-
-    loadFortune()
   }, [])
 
-  const handleNewFortune = () => {
-    setNewFortune(true)
-    setTimeout(() => {
-      setFortune(getDailyFortune())
-      setNewFortune(false)
-    }, 600)
+  const handleSpinComplete = (fortuneType: FortuneType) => {
+    setIsSpinning(false)
+    setSelectedFortuneType(fortuneType)
+    setPageState('choices')
+  }
+
+  const handleChoicesComplete = (userSelections: Record<string, string>) => {
+    setSelections(userSelections)
+    markFortuneAsUsed()
+    setPageState('result')
+  }
+
+  const handleReset = () => {
+    setPageState('welcome')
+    setSelectedFortuneType(null)
+    setSelections({})
+    setIsSpinning(false)
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
-      <StarField />
-
-      {/* Header */}
-      <div className="text-center mb-12 z-10">
-        <h1 className="text-6xl md:text-7xl font-mystical font-bold mb-2 mystical-glow">
-          ✨ Fortunegram ✨
-        </h1>
-        <p className="text-purple-300 text-lg md:text-xl font-serif">
-          Divine your destiny, one fortune at a time
-        </p>
+    <main className="min-h-screen bg-neutral-0 relative z-0">
+      {/* Subtle background gradient */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-neutral-50 via-neutral-0 to-neutral-50 opacity-40" />
       </div>
 
-      {/* Fortune Card */}
-      <div className="w-full max-w-2xl mb-8 z-10">
-        <FortuneCard
-          fortune={fortune}
-          isLoading={isLoading}
-          isAnimating={newFortune}
-        />
-      </div>
+      {/* Content */}
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-12">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-neutral-950 mb-2">
+            Fortunegram
+          </h1>
+          <p className="text-neutral-600 text-lg">
+            Spin the wheel. Choose your path. Discover your fortune.
+          </p>
+        </div>
 
-      {/* Buttons */}
-      <div className="flex gap-4 z-10 flex-wrap justify-center">
-        <button
-          onClick={handleNewFortune}
-          disabled={isLoading}
-          className="px-8 py-3 bg-purple-600 hover:bg-purple-500 text-white font-serif rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-purple-500/50"
-        >
-          🔮 Another Fortune
-        </button>
+        {/* Main Content */}
+        <div className="w-full max-w-2xl">
+          {pageState === 'welcome' && !hasUsedToday && (
+            <div className="animate-fade-in">
+              <p className="text-center text-neutral-600 mb-8">
+                Select from five mystical methods to divine your future.
+              </p>
+              <FortuneWheel
+                onSpinComplete={handleSpinComplete}
+                isSpinning={isSpinning}
+              />
+              <button
+                onClick={() => {
+                  setIsSpinning(true)
+                }}
+                className="w-full mt-8 btn btn-accent text-lg py-3"
+              >
+                Begin Your Reading
+              </button>
+            </div>
+          )}
 
-        <button
-          className="px-8 py-3 border-2 border-purple-500 text-purple-300 hover:text-purple-200 font-serif rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/30"
-        >
-          📖 About
-        </button>
+          {pageState === 'choices' && selectedFortuneType && (
+            <ChoiceFlow
+              fortuneType={selectedFortuneType}
+              onComplete={handleChoicesComplete}
+            />
+          )}
+
+          {pageState === 'result' && selectedFortuneType && (
+            <FortuneDisplay
+              fortuneType={selectedFortuneType}
+              selections={selections}
+            />
+          )}
+
+          {pageState === 'daily-limit' && (
+            <DailyLimitNotice onReset={handleReset} />
+          )}
+        </div>
+
+        {/* Navigation */}
+        {(pageState === 'choices' || pageState === 'result') && (
+          <button
+            onClick={handleReset}
+            className="mt-8 btn btn-secondary text-sm"
+          >
+            ← Back Home
+          </button>
+        )}
       </div>
 
       {/* Footer */}
-      <footer className="absolute bottom-4 text-purple-400 text-sm opacity-60 z-10">
-        <p>✦ Tap into the mystical energies ✦</p>
+      <footer className="relative z-10 text-center py-6 text-neutral-500 text-sm">
+        <p>One fortune per day • Midnight resets in your local timezone</p>
       </footer>
     </main>
   )

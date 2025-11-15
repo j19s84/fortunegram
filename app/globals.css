@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Garamond:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Crimson+Text:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -15,46 +15,79 @@ html {
 }
 
 body {
-  @apply bg-slate-950 text-white font-serif;
-  background: linear-gradient(135deg, #0f172a 0%, #1a0f2e 50%, #0f172a 100%);
+  @apply bg-neutral-0 text-neutral-950 font-sans;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
 }
 
-/* Mystical background stars animation */
-@keyframes twinkle {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 1; }
+/* Subtle gradient background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(250, 250, 249, 0.8));
+  pointer-events: none;
+  z-index: 0;
 }
 
-.star {
-  animation: twinkle 3s infinite;
-  position: absolute;
+/* Subtle accent divider */
+.divider {
+  @apply h-px bg-neutral-200;
 }
 
-/* Mystical glow effect */
-.mystical-glow {
-  text-shadow: 0 0 10px rgba(147, 89, 219, 0.5),
-               0 0 20px rgba(147, 89, 219, 0.3);
+/* Clean card style */
+.card {
+  @apply bg-neutral-0 border border-neutral-200 rounded-lg;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Witchy card effect */
-.witchy-card {
-  @apply bg-black bg-opacity-50 backdrop-blur-sm border border-purple-500 border-opacity-30 rounded-lg p-8;
-  box-shadow: 0 0 30px rgba(147, 89, 219, 0.2), inset 0 0 20px rgba(147, 89, 219, 0.1);
+.card-hover {
+  @apply transition-all duration-200 hover:shadow-md;
 }
 
-/* Shimmering text effect */
-@keyframes shimmer {
-  0% { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
+/* Button styles - minimal */
+.btn {
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2;
 }
 
-.shimmer-text {
-  background: linear-gradient(90deg, rgba(255,255,255,0.2), rgba(147,89,219,0.4), rgba(255,255,255,0.2));
-  background-size: 1000px 100%;
-  animation: shimmer 3s infinite;
-  -webkit-background-clip: text;
-  background-clip: text;
+.btn-primary {
+  @apply bg-neutral-900 text-neutral-0 hover:bg-neutral-800;
+}
+
+.btn-secondary {
+  @apply bg-neutral-100 text-neutral-900 hover:bg-neutral-200 border border-neutral-300;
+}
+
+.btn-accent {
+  @apply bg-accent-600 text-neutral-0 hover:bg-accent-700;
+}
+
+/* Subtle animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.4s ease-out;
 }

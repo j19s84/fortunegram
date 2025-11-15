@@ -7,7 +7,13 @@
       "Bash(npm config set:*)",
       "Bash(npm run build:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(gh repo create:*)",
+      "Bash(git config:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(git remote:*)",
+      "WebFetch(domain:fortunegram.vercel.app)"
     ],
     "deny": [],
     "ask": []
