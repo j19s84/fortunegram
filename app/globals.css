@@ -138,12 +138,32 @@ body::before {
 @keyframes grainShift {
   0% {
     background-position: 0% 0%;
+    opacity: 0.35;
+  }
+  25% {
+    background-position: 25% 25%;
+    opacity: 0.4;
   }
   50% {
-    background-position: 100% 100%;
+    background-position: 50% 50%;
+    opacity: 0.35;
+  }
+  75% {
+    background-position: 75% 75%;
+    opacity: 0.4;
   }
   100% {
-    background-position: 0% 0%;
+    background-position: 100% 100%;
+    opacity: 0.35;
+  }
+}
+
+@keyframes grainIntensity {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.5;
   }
 }
 
@@ -169,15 +189,17 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2' /%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='5' seed='2' /%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.35'/%3E%3C/svg%3E");
   background-size: 400px 400px;
   pointer-events: none;
-  animation: grainShift 8s ease-in-out infinite;
-  opacity: 0.5;
+  animation: grainShift 10s ease-in-out infinite, grainIntensity 6s ease-in-out infinite;
+  opacity: 0.4;
+  z-index: 1;
 }
 
-.grain-texture.active::before {
-  opacity: 0.8;
+.grain-texture:hover::before {
+  opacity: 0.65;
+  animation: grainShift 10s ease-in-out infinite, grainIntensity 4s ease-in-out infinite;
 }
 
 /* Liquid light gradient effect */

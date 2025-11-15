@@ -26,7 +26,7 @@ export default function AuraButtons({ onControlClick, onChaosClick }: AuraButton
         onClick={handleControlClick}
         onMouseEnter={() => setHoverControl(true)}
         onMouseLeave={() => setHoverControl(false)}
-        className="group relative flex-1 grain-texture transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-inset md:rounded-l-xl"
+        className={`group relative flex-1 grain-texture transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-inset md:rounded-l-xl ${hoverControl ? 'active' : ''}`}
         style={{
           background: 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #991b1b 100%)',
           backgroundSize: '400% 400%',
@@ -64,7 +64,7 @@ export default function AuraButtons({ onControlClick, onChaosClick }: AuraButton
         onClick={handleChaosClick}
         onMouseEnter={() => setHoverChaos(true)}
         onMouseLeave={() => setHoverChaos(false)}
-        className="group relative flex-1 grain-texture transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-inset md:rounded-r-xl"
+        className={`group relative flex-1 grain-texture transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-inset md:rounded-r-xl ${hoverChaos ? 'active' : ''}`}
         style={{
           background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e40af 100%)',
           backgroundSize: '400% 400%',
