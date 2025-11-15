@@ -225,17 +225,47 @@ export default function ChoiceFlow({ fortuneType, onComplete }: ChoiceFlowProps)
         <p className="text-neutral-600">{question.description}</p>
       </div>
 
-      {/* Choices */}
-      <div className="grid gap-3">
-        {question.choices.map((choice) => (
-          <button
-            key={choice.id}
-            onClick={() => handleChoice(choice.id)}
-            className="card card-hover p-4 text-left hover:bg-neutral-50 transition-colors"
-          >
-            <span className="font-medium text-neutral-900">{choice.text}</span>
-          </button>
-        ))}
+      {/* Choices - Tarot Spread Layout */}
+      <div className="flex justify-center items-end gap-6 perspective mb-8">
+        {question.choices.map((choice, index) => {
+          const positions = [
+            'rotate-y-12 -translate-x-2',
+            'scale-105',
+            'rotate-y-minus-12 translate-x-2',
+          ]
+          const offset = index === 0 ? -8 : index === 2 ? 8 : 0
+
+          return (
+            <button
+              key={choice.id}
+              onClick={() => handleChoice(choice.id)}
+              className="group relative flex-1 max-w-[140px] h-[200px] bg-neutral-0 border-2 border-neutral-300 rounded-lg p-4 flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-105 hover:border-purple-500 hover:-translate-y-2 hover:shadow-lg active:scale-95"
+              style={{
+                transform: `perspective(1000px) rotateY(${offset}deg) ${
+                  index === 1 ? 'scale(1.05)' : ''
+                }`,
+              }}
+            >
+              {/* Card content */}
+              <div className="flex flex-col items-center gap-2 h-full justify-center">
+                {/* Simple icon based on index */}
+                <div className="text-2xl">
+                  {index === 0 && '✧'}
+                  {index === 1 && '◆'}
+                  {index === 2 && '✧'}
+                </div>
+
+                {/* Choice text */}
+                <p className="text-sm font-medium text-neutral-900 leading-tight group-hover:text-purple-600 transition-colors">
+                  {choice.text}
+                </p>
+
+                {/* Hover glow */}
+                <div className="absolute inset-0 rounded-lg bg-purple-500 opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none" />
+              </div>
+            </button>
+          )
+        })}
       </div>
 
       {/* Navigation */}
