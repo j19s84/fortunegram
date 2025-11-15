@@ -208,21 +208,38 @@ body::before {
   right: 0;
   bottom: 0;
   background-image:
-    radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px),
-    radial-gradient(circle, rgba(0,0,0,0.15) 1.5px, transparent 1.5px),
-    radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-  background-size: 50px 50px, 80px 80px, 100px 100px;
-  background-position: 0 0, 25px 25px, 50px 50px;
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.08) 0px,
+      rgba(255, 255, 255, 0.08) 2px,
+      transparent 2px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.1) 0px,
+      rgba(0, 0, 0, 0.1) 2px,
+      transparent 2px,
+      transparent 5px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(200, 200, 200, 0.06) 0px,
+      rgba(200, 200, 200, 0.06) 3px,
+      transparent 3px,
+      transparent 6px
+    );
+  background-size: 100% 100%;
   pointer-events: none;
-  animation: grainShift 12s ease-in-out infinite, grainIntensity 8s ease-in-out infinite;
-  opacity: 0.6;
+  animation: grainShift 15s ease-in-out infinite, grainIntensity 8s ease-in-out infinite;
+  opacity: 0.75;
   z-index: 1;
-  mix-blend-mode: multiply;
+  mix-blend-mode: overlay;
 }
 
 .grain-texture:hover::before {
-  opacity: 0.8;
-  animation: grainShift 8s ease-in-out infinite, grainIntensity 4s ease-in-out infinite;
+  opacity: 0.9;
+  animation: grainShift 10s ease-in-out infinite, grainIntensity 4s ease-in-out infinite;
 }
 
 /* Liquid light gradient effect */
