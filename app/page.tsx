@@ -99,18 +99,19 @@ export default function Home() {
         <div className="w-full max-w-4xl">
           {/* Landing Page */}
           {pageState === 'landing' && (
-            <div className="animate-fade-in flex flex-col items-center gap-16">
-              <div className="text-center">
-                <p className="text-neutral-700 mb-16 text-lg max-w-2xl font-serif">
+            <div className="animate-fade-in flex flex-col items-center w-screen -mx-4 md:-mx-0">
+              {/* Question text above grainy areas */}
+              <div className="text-center mb-12 px-4 z-10 relative">
+                <p className="text-neutral-700 text-lg max-w-2xl font-serif leading-relaxed">
                   Will you seize control of your destiny, or surrender to the mysteries of the universe?
                 </p>
-
-                {/* Aura Buttons */}
-                <AuraButtons
-                  onControlClick={() => handleLandingChoice('controlled')}
-                  onChaosClick={() => handleLandingChoice('chaos')}
-                />
               </div>
+
+              {/* Grainy Gradient Areas */}
+              <AuraButtons
+                onControlClick={() => handleLandingChoice('controlled')}
+                onChaosClick={() => handleLandingChoice('chaos')}
+              />
             </div>
           )}
 
