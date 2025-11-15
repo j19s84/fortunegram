@@ -14,7 +14,7 @@ const FORTUNE_LABELS: Record<FortuneType, string> = {
   runes: 'Your Rune Divination',
   iching: 'Your I Ching Wisdom',
   numerology: 'Your Numerology Insight',
-  aiWitch: 'Your Witch\'s Guidance',
+  aiWitch: 'Your Witch&apos;s Guidance',
 }
 
 export default function FortuneDisplay({ fortuneType, selections }: FortuneDisplayProps) {
@@ -54,7 +54,7 @@ export default function FortuneDisplay({ fortuneType, selections }: FortuneDispl
       {/* Fortune Card */}
       <div className="card p-8 mb-8">
         <p className="text-lg leading-relaxed text-neutral-700 font-serif text-center">
-          "{fortune}"
+          &quot;{fortune}&quot;
         </p>
       </div>
 

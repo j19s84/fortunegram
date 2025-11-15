@@ -46,7 +46,7 @@ export default function DailyLimitNotice({ onReset }: DailyLimitNoticeProps) {
           Daily Fortune Used
         </h3>
         <p className="text-neutral-600 mb-6">
-          You've received your fortune for today. Return tomorrow for a new reading.
+          You&apos;ve received your fortune for today. Return tomorrow for a new reading.
         </p>
 
         {/* Countdown */}
@@ -80,7 +80,7 @@ export default function DailyLimitNotice({ onReset }: DailyLimitNoticeProps) {
         <div className="bg-neutral-50 rounded-lg p-4 mb-6">
           <p className="text-sm font-medium text-neutral-900 mb-3">While you wait:</p>
           <ul className="space-y-2 text-sm text-neutral-600">
-            <li>• Reflect on today's fortune</li>
+            <li>• Reflect on today&apos;s fortune</li>
             <li>• Share your reading with friends</li>
             <li>• Explore different fortune methods</li>
           </ul>
@@ -98,8 +98,8 @@ export default function DailyLimitNotice({ onReset }: DailyLimitNoticeProps) {
       {/* Info Box */}
       <div className="mt-6 p-4 bg-neutral-50 rounded-lg text-center text-sm text-neutral-600">
         <p>
-          <strong>Why once per day?</strong> Daily fortunes are more meaningful when they're special.
-          One reading per day helps you focus on its message and trust in the universe's timing.
+          <strong>Why once per day?</strong> Daily fortunes are more meaningful when they&apos;re special.
+          One reading per day helps you focus on its message and trust in the universe&apos;s timing.
         </p>
       </div>
     </div>
