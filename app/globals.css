@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Crimson+Text:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libertinus+Serif:ital@0;1&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -90,4 +90,46 @@ body::before {
 
 .animate-slide-in-up {
   animation: slideInUp 0.4s ease-out;
+}
+
+/* Aura pulse animation */
+@keyframes auraPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+@keyframes auraGlow {
+  0%, 100% {
+    filter: blur(40px) brightness(1);
+  }
+  50% {
+    filter: blur(40px) brightness(1.1);
+  }
+}
+
+@keyframes glowBurst {
+  0% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 40px rgba(139, 92, 246, 0);
+  }
+}
+
+.aura-pulse {
+  animation: auraPulse 3.5s ease-in-out infinite;
+}
+
+.aura-glow {
+  animation: auraGlow 3.5s ease-in-out infinite;
+}
+
+.aura-burst {
+  animation: glowBurst 0.6s ease-out;
 }

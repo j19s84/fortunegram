@@ -36,7 +36,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        serif: ['Crimson Text', 'Georgia', 'serif'],
+        serif: ['Libertinus Serif', 'Georgia', 'serif'],
       },
       keyframes: {
         spin: {

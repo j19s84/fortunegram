@@ -53,7 +53,7 @@ export default function FortuneDisplay({ fortuneType, selections }: FortuneDispl
 
       {/* Fortune Card */}
       <div className="card p-8 mb-8">
-        <p className="text-lg leading-relaxed text-neutral-700 font-serif text-center">
+        <p className="text-2xl leading-relaxed text-neutral-800 font-serif text-center italic">
           &quot;{fortune}&quot;
         </p>
       </div>

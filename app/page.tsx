@@ -5,6 +5,7 @@ import FortuneWheel, { type FortuneType } from '@/components/FortuneWheel'
 import ChoiceFlow from '@/components/ChoiceFlow'
 import FortuneDisplay from '@/components/FortuneDisplay'
 import DailyLimitNotice from '@/components/DailyLimitNotice'
+import AuraButtons from '@/components/AuraButtons'
 import { hasUsedFortune, markFortuneAsUsed } from '@/lib/dailyLimit'
 
 type PageState = 'landing' | 'wheel' | 'questions' | 'result' | 'daily-limit'
@@ -85,12 +86,12 @@ export default function Home() {
       {/* Content */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-12">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-serif font-bold text-neutral-950 mb-3">
+        <div className="text-center mb-16">
+          <h1 className="text-6xl md:text-7xl font-serif font-bold text-neutral-950 mb-4 tracking-tight">
             Fortunegram
           </h1>
-          <p className="text-neutral-600 text-lg italic">
-            Your destiny awaits
+          <p className="text-neutral-600 text-xl font-serif italic">
+            Daily directions from the beyond.
           </p>
         </div>
 
@@ -98,34 +99,17 @@ export default function Home() {
         <div className="w-full max-w-4xl">
           {/* Landing Page */}
           {pageState === 'landing' && (
-            <div className="animate-fade-in flex flex-col items-center gap-8">
+            <div className="animate-fade-in flex flex-col items-center gap-16">
               <div className="text-center">
-                <p className="text-neutral-600 mb-12 text-lg max-w-lg">
+                <p className="text-neutral-700 mb-16 text-lg max-w-2xl font-serif">
                   Will you seize control of your destiny, or surrender to the mysteries of the universe?
                 </p>
 
-                {/* Two main buttons */}
-                <div className="flex flex-col sm:flex-row gap-6 justify-center mb-8">
-                  {/* Control Button */}
-                  <button
-                    onClick={() => handleLandingChoice('controlled')}
-                    className="group relative px-8 py-6 bg-white border-2 border-neutral-900 rounded-lg font-serif font-bold text-neutral-900 transition-all duration-300 hover:bg-neutral-50 hover:shadow-lg hover:-translate-y-1 active:scale-95 max-w-xs"
-                  >
-                    <span className="block text-2xl mb-2">👑</span>
-                    <span className="block text-lg mb-2">I&apos;m in Control</span>
-                    <span className="block text-xs text-neutral-600 italic">Choose your own path</span>
-                  </button>
-
-                  {/* Chaos Button */}
-                  <button
-                    onClick={() => handleLandingChoice('chaos')}
-                    className="group relative px-8 py-6 bg-gradient-to-br from-purple-900 to-purple-800 border-2 border-purple-600 rounded-lg font-serif font-bold text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-purple-500 active:scale-95 max-w-xs"
-                  >
-                    <span className="block text-2xl mb-2">🌀</span>
-                    <span className="block text-lg mb-2">Totally Not in Control</span>
-                    <span className="block text-xs text-purple-200 italic">Let fate decide</span>
-                  </button>
-                </div>
+                {/* Aura Buttons */}
+                <AuraButtons
+                  onControlClick={() => handleLandingChoice('controlled')}
+                  onChaosClick={() => handleLandingChoice('chaos')}
+                />
               </div>
             </div>
           )}
