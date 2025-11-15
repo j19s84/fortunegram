@@ -91,7 +91,7 @@ export default function Home() {
             Fortunegram
           </h1>
           <p className="text-neutral-600 text-xl font-serif italic">
-            Daily directions from the beyond.
+            TEST TEST TEST
           </p>
         </div>
 
