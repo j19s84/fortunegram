@@ -17,12 +17,16 @@ export default function Home() {
   const [hasUsedToday, setHasUsedToday] = useState(false)
 
   useEffect(() => {
+    // TEMPORARILY DISABLED FOR TESTING
+    // TODO: Re-enable daily limit by uncommenting this code
+    /*
     // Check if user has already used their fortune today
     const used = hasUsedFortune()
     setHasUsedToday(used)
     if (used) {
       setPageState('daily-limit')
     }
+    */
   }, [])
 
   const handleSpinComplete = (fortuneType: FortuneType) => {
@@ -33,7 +37,9 @@ export default function Home() {
 
   const handleChoicesComplete = (userSelections: Record<string, string>) => {
     setSelections(userSelections)
-    markFortuneAsUsed()
+    // TEMPORARILY DISABLED FOR TESTING
+    // TODO: Re-enable by uncommenting this line
+    // markFortuneAsUsed()
     setPageState('result')
   }
 
@@ -65,7 +71,8 @@ export default function Home() {
 
         {/* Main Content */}
         <div className="w-full max-w-2xl">
-          {pageState === 'welcome' && !hasUsedToday && (
+          {/* TEMPORARILY DISABLED: !hasUsedToday check removed for testing */}
+          {pageState === 'welcome' && (
             <div className="animate-fade-in">
               <p className="text-center text-neutral-600 mb-8">
                 Select from five mystical methods to divine your future.
@@ -99,9 +106,10 @@ export default function Home() {
             />
           )}
 
-          {pageState === 'daily-limit' && (
+          {/* TEMPORARILY DISABLED FOR TESTING */}
+          {/* {pageState === 'daily-limit' && (
             <DailyLimitNotice onReset={handleReset} />
-          )}
+          )} */}
         </div>
 
         {/* Navigation */}
