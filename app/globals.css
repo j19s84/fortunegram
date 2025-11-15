@@ -167,6 +167,24 @@ body::before {
   }
 }
 
+@keyframes grainFlow {
+  0% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 50% 25%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  75% {
+    background-position: 50% 75%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
 @keyframes colorPulse {
   0%, 100% {
     filter: brightness(1) saturate(1);
@@ -189,19 +207,22 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 500 500' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='6' seed='1' result='noise' /%3E%3CfeDisplacementMap in='SourceGraphic' in2='noise' scale='2' xChannelSelector='R' yChannelSelector='G' /%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' seed='3' result='fineNoise' /%3E%3CfeComposite in='noise' in2='fineNoise' operator='lighten' /%3E%3C/filter%3E%3C/defs%3E%3Crect width='500' height='500' fill='rgba(0,0,0,0.4)' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
-  background-size: 500px 500px;
-  background-attachment: fixed;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px),
+    radial-gradient(circle, rgba(0,0,0,0.15) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 50px 50px, 80px 80px, 100px 100px;
+  background-position: 0 0, 25px 25px, 50px 50px;
   pointer-events: none;
-  animation: grainShift 12s ease-in-out infinite, grainIntensity 7s ease-in-out infinite;
-  opacity: 0.45;
+  animation: grainShift 12s ease-in-out infinite, grainIntensity 8s ease-in-out infinite;
+  opacity: 0.6;
   z-index: 1;
-  mix-blend-mode: overlay;
+  mix-blend-mode: multiply;
 }
 
 .grain-texture:hover::before {
-  opacity: 0.65;
-  animation: grainShift 10s ease-in-out infinite, grainIntensity 4s ease-in-out infinite;
+  opacity: 0.8;
+  animation: grainShift 8s ease-in-out infinite, grainIntensity 4s ease-in-out infinite;
 }
 
 /* Liquid light gradient effect */
