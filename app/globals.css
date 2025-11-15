@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Garamond:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-slate-950 text-white font-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #1a0f2e 50%, #0f172a 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Mystical background stars animation */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+.star {
+  animation: twinkle 3s infinite;
+  position: absolute;
+}
+
+/* Mystical glow effect */
+.mystical-glow {
+  text-shadow: 0 0 10px rgba(147, 89, 219, 0.5),
+               0 0 20px rgba(147, 89, 219, 0.3);
+}
+
+/* Witchy card effect */
+.witchy-card {
+  @apply bg-black bg-opacity-50 backdrop-blur-sm border border-purple-500 border-opacity-30 rounded-lg p-8;
+  box-shadow: 0 0 30px rgba(147, 89, 219, 0.2), inset 0 0 20px rgba(147, 89, 219, 0.1);
+}
+
+/* Shimmering text effect */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, rgba(255,255,255,0.2), rgba(147,89,219,0.4), rgba(255,255,255,0.2));
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
