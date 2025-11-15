@@ -5,7 +5,9 @@
       "Bash(npm install:*)",
       "Bash(npx --yes next@15:*)",
       "Bash(npm config set:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
