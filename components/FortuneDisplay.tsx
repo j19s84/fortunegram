@@ -1,34 +1,38 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { FortuneType } from './FortuneWheel'
-import { getFortune } from '@/lib/fortunes'
+import type { CorpseChoices } from './CorpseBuilder'
 
 interface FortuneDisplayProps {
-  fortuneType: FortuneType
-  selections: Record<string, string>
+  fortuneChoices?: CorpseChoices
+  fortuneType?: string
+  selections?: Record<string, string>
 }
 
-const FORTUNE_LABELS: Record<FortuneType, string> = {
-  tarot: 'Your Tarot Reading',
-  runes: 'Your Rune Divination',
-  iching: 'Your I Ching Wisdom',
-  numerology: 'Your Numerology Insight',
-  aiWitch: 'Your Witch&apos;s Guidance',
-}
-
-export default function FortuneDisplay({ fortuneType, selections }: FortuneDisplayProps) {
+export default function FortuneDisplay({ fortuneChoices, fortuneType, selections }: FortuneDisplayProps) {
   const [fortune, setFortune] = useState<string>('')
   const [isRevealing, setIsRevealing] = useState(false)
 
   useEffect(() => {
-    // Simulate fortune generation based on selections
-    setTimeout(() => {
-      const generatedFortune = getFortune(fortuneType, selections)
-      setFortune(generatedFortune)
-      setIsRevealing(true)
-    }, 500)
-  }, [fortuneType, selections])
+    // Simulate fortune generation based on corpse choices
+    if (fortuneChoices) {
+      setTimeout(() => {
+        const generatedFortune = generateCorpseFortune(fortuneChoices)
+        setFortune(generatedFortune)
+        setIsRevealing(true)
+      }, 500)
+    }
+  }, [fortuneChoices])
+
+  const generateCorpseFortune = (choices: CorpseChoices): string => {
+    const fortunes = [
+      `Your ${choices.character} seeks wisdom ${choices.timeframe?.toLowerCase()}. Move with a ${choices.energy?.toLowerCase()} approach through ${choices.lens?.toLowerCase()} perspective.`,
+      `The universe speaks through ${choices.character}. In this moment of ${choices.timeframe?.toLowerCase()}, embrace ${choices.energy?.toLowerCase()} energy. View all through ${choices.lens?.toLowerCase()} eyes.`,
+      `${choices.character} awakens to possibility. What calls to you ${choices.timeframe?.toLowerCase()} arrives with ${choices.energy?.toLowerCase()} force. Trust ${choices.lens?.toLowerCase()} wisdom.`,
+      `In the dance of fate, ${choices.character} moves ${choices.energy?.toLowerCase()}. The ${choices.timeframe?.toLowerCase()} unfolds with ${choices.lens?.toLowerCase()} revelation awaiting.`,
+    ]
+    return fortunes[Math.floor(Math.random() * fortunes.length)]
+  }
 
   if (!fortune) {
     return (
@@ -46,7 +50,7 @@ export default function FortuneDisplay({ fortuneType, selections }: FortuneDispl
       <div className="text-center mb-8">
         <div className="inline-block px-3 py-1 bg-neutral-100 rounded-full mb-4">
           <span className="text-xs font-semibold text-neutral-600 uppercase tracking-wide">
-            {FORTUNE_LABELS[fortuneType]}
+            Your Exquisite Corpse
           </span>
         </div>
       </div>
@@ -59,17 +63,29 @@ export default function FortuneDisplay({ fortuneType, selections }: FortuneDispl
       </div>
 
       {/* Selection Summary */}
-      <div className="bg-neutral-50 rounded-lg p-6">
-        <h4 className="text-sm font-semibold text-neutral-900 mb-4">Your Selections</h4>
-        <div className="grid grid-cols-1 gap-2 text-sm text-neutral-600">
-          {Object.entries(selections).map(([key, value]) => (
-            <div key={key} className="flex justify-between">
-              <span>{key.replace('question_', 'Question ')}</span>
-              <span className="font-medium text-neutral-900">{value}</span>
+      {fortuneChoices && (
+        <div className="bg-neutral-50 rounded-lg p-6">
+          <h4 className="text-sm font-semibold text-neutral-900 mb-4">Your Corpse Composition</h4>
+          <div className="grid grid-cols-1 gap-2 text-sm text-neutral-600">
+            <div className="flex justify-between">
+              <span>Character (Head)</span>
+              <span className="font-medium text-neutral-900">{fortuneChoices.character}</span>
             </div>
-          ))}
+            <div className="flex justify-between">
+              <span>Timeframe (Torso)</span>
+              <span className="font-medium text-neutral-900">{fortuneChoices.timeframe}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Energy (Legs)</span>
+              <span className="font-medium text-neutral-900">{fortuneChoices.energy}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Lens (Feet)</span>
+              <span className="font-medium text-neutral-900">{fortuneChoices.lens}</span>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Actions */}
       <div className="flex gap-3 mt-8 justify-center">

@@ -1,21 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import FortuneWheel, { type FortuneType } from '@/components/FortuneWheel'
-import ChoiceFlow from '@/components/ChoiceFlow'
+import CorpseBuilder, { type CorpseChoices } from '@/components/CorpseBuilder'
 import FortuneDisplay from '@/components/FortuneDisplay'
 import DailyLimitNotice from '@/components/DailyLimitNotice'
-import AuraButtons from '@/components/AuraButtons'
 import { hasUsedFortune, markFortuneAsUsed } from '@/lib/dailyLimit'
 
-type PageState = 'landing' | 'wheel' | 'questions' | 'result' | 'daily-limit'
+type PageState = 'landing' | 'corpse-builder' | 'result' | 'daily-limit'
 
 export default function Home() {
   const [pageState, setPageState] = useState<PageState>('landing')
-  const [selectedFortuneType, setSelectedFortuneType] = useState<FortuneType | null>(null)
-  const [selections, setSelections] = useState<Record<string, string>>({})
-  const [isSpinning, setIsSpinning] = useState(false)
-  const [landedSegment, setLandedSegment] = useState<FortuneType | null>(null)
+  const [corpseChoices, setCorpseChoices] = useState<CorpseChoices | null>(null)
   const [hasUsedToday, setHasUsedToday] = useState(false)
 
   useEffect(() => {
@@ -31,31 +26,17 @@ export default function Home() {
   }, [])
 
   const handleStartClick = () => {
-    setPageState('wheel')
+    setPageState('corpse-builder')
   }
 
-  const handleWheelComplete = (fortuneType: FortuneType) => {
-    setLandedSegment(fortuneType)
-    setSelectedFortuneType(fortuneType)
-    // Auto-advance to questions after brief pause
-    setTimeout(() => {
-      setPageState('questions')
-    }, 1500)
-  }
-
-  const handleChoicesComplete = (userSelections: Record<string, string>) => {
-    setSelections(userSelections)
-    // TEMPORARILY DISABLED FOR TESTING
-    // markFortuneAsUsed()
+  const handleCorpseComplete = (choices: CorpseChoices) => {
+    setCorpseChoices(choices)
     setPageState('result')
   }
 
   const handleReset = () => {
     setPageState('landing')
-    setSelectedFortuneType(null)
-    setSelections({})
-    setIsSpinning(false)
-    setLandedSegment(null)
+    setCorpseChoices(null)
   }
 
   return (
@@ -97,53 +78,17 @@ export default function Home() {
           )}
 
           {/* Wheel Page */}
-          {pageState === 'wheel' && (
-            <div className="animate-fade-in flex flex-col items-center transition-opacity duration-500">
-              {/* Instruction Text - centered above wheel */}
-              <p className="text-neutral-600 text-sm font-medium mb-8">
-                Let fate guide you
-              </p>
-
-              {/* Wheel - centered */}
-              <div className="flex justify-center mb-8">
-                <FortuneWheel
-                  onSpinComplete={handleWheelComplete}
-                  isSpinning={isSpinning}
-                  landedSegment={landedSegment}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Questions Page */}
-          {pageState === 'questions' && selectedFortuneType && (
-            <div className="animate-slide-in-up">
-              {/* Wheel at top (smaller - 200px) */}
-              <div className="mb-12 flex justify-center">
-                <div style={{ width: '200px', height: '200px' }}>
-                  <FortuneWheel
-                    onSpinComplete={() => {}}
-                    onSegmentClick={() => {}}
-                    isSpinning={false}
-                    isStatic={true}
-                    landedSegment={selectedFortuneType}
-                  />
-                </div>
-              </div>
-
-              {/* Questions below */}
-              <ChoiceFlow
-                fortuneType={selectedFortuneType}
-                onComplete={handleChoicesComplete}
-              />
+          {/* Corpse Builder Page */}
+          {pageState === 'corpse-builder' && (
+            <div className="animate-fade-in">
+              <CorpseBuilder onComplete={handleCorpseComplete} />
             </div>
           )}
 
           {/* Result Page */}
-          {pageState === 'result' && selectedFortuneType && (
+          {pageState === 'result' && corpseChoices && (
             <FortuneDisplay
-              fortuneType={selectedFortuneType}
-              selections={selections}
+              fortuneChoices={corpseChoices}
             />
           )}
 
@@ -154,7 +99,7 @@ export default function Home() {
         </div>
 
         {/* Navigation */}
-        {(pageState === 'wheel' || pageState === 'questions' || pageState === 'result') && (
+        {(pageState === 'corpse-builder' || pageState === 'result') && (
           <button
             onClick={handleReset}
             className="mt-12 btn btn-secondary text-sm"
