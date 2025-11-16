@@ -8,9 +8,6 @@ interface AuraButtonsProps {
 }
 
 export default function AuraButtons({ onControlClick, onChaosClick }: AuraButtonsProps) {
-  const [hoverControl, setHoverControl] = useState(false)
-  const [hoverChaos, setHoverChaos] = useState(false)
-
   const handleControlClick = () => {
     setTimeout(onControlClick, 100)
   }
@@ -20,66 +17,29 @@ export default function AuraButtons({ onControlClick, onChaosClick }: AuraButton
   }
 
   return (
-    <div
-      className="w-full h-96 relative flex items-center justify-center gap-16"
-      style={{
-        backgroundImage: 'url(/gradients.svg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
-      {/* Left Blob - In Control */}
+    <div className="w-full flex flex-col gap-4">
       <button
         onClick={handleControlClick}
-        onMouseEnter={() => setHoverControl(true)}
-        onMouseLeave={() => setHoverControl(false)}
-        className="relative w-48 h-48 transition-all duration-300 ease-out focus:outline-none"
-        style={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '63% 37% 54% 46% / 55% 48% 52% 45%',
-          boxShadow: hoverControl
-            ? '0 20px 60px rgba(0, 0, 0, 0.3)'
-            : '0 10px 30px rgba(0, 0, 0, 0.15)',
-          transform: hoverControl ? 'scale(1.08)' : 'scale(1)',
-        }}
+        className="w-full px-8 py-6 border border-neutral-200 rounded-lg bg-neutral-0 hover:bg-neutral-50 transition-colors duration-200 text-left focus:outline-none focus:ring-2 focus:ring-neutral-400"
       >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-serif font-bold text-neutral-950">
-              In Control
-            </h2>
-            <p className="text-xs text-neutral-600 mt-2 font-sans">
-              Choose your path
-            </p>
-          </div>
-        </div>
+        <h2 className="text-lg font-semibold text-neutral-950 mb-2">
+          In Control
+        </h2>
+        <p className="text-sm text-neutral-600">
+          Choose your path
+        </p>
       </button>
 
-      {/* Right Blob - Totally Not */}
       <button
         onClick={handleChaosClick}
-        onMouseEnter={() => setHoverChaos(true)}
-        onMouseLeave={() => setHoverChaos(false)}
-        className="relative w-48 h-48 transition-all duration-300 ease-out focus:outline-none"
-        style={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          borderRadius: '58% 42% 46% 54% / 49% 52% 48% 51%',
-          boxShadow: hoverChaos
-            ? '0 20px 60px rgba(0, 0, 0, 0.3)'
-            : '0 10px 30px rgba(0, 0, 0, 0.15)',
-          transform: hoverChaos ? 'scale(1.08)' : 'scale(1)',
-        }}
+        className="w-full px-8 py-6 border border-neutral-200 rounded-lg bg-neutral-0 hover:bg-neutral-50 transition-colors duration-200 text-left focus:outline-none focus:ring-2 focus:ring-neutral-400"
       >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-serif font-bold text-neutral-950">
-              Totally Not
-            </h2>
-            <p className="text-xs text-neutral-600 mt-2 font-sans">
-              Let fate decide
-            </p>
-          </div>
-        </div>
+        <h2 className="text-lg font-semibold text-neutral-950 mb-2">
+          Totally Not
+        </h2>
+        <p className="text-sm text-neutral-600">
+          Let fate decide
+        </p>
       </button>
     </div>
   )
