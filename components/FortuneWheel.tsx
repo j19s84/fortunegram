@@ -22,37 +22,30 @@ const WHEEL_SEGMENTS: WheelSegment[] = [
 interface FortuneWheelProps {
   onSpinComplete: (fortuneType: FortuneType) => void
   isSpinning: boolean
-  onSegmentClick?: (fortuneType: FortuneType) => void
-  isStatic?: boolean
   landedSegment?: FortuneType | null
-  autoSpin?: boolean
 }
 
 export default function FortuneWheel({
   onSpinComplete,
   isSpinning,
-  onSegmentClick,
-  isStatic = false,
   landedSegment = null,
-  autoSpin = false,
 }: FortuneWheelProps) {
   const [rotation, setRotation] = useState(0)
-  const [hoveredSegment, setHoveredSegment] = useState<FortuneType | null>(null)
   const [postSpinGlow, setPostSpinGlow] = useState(false)
-  const [pulsingSegment, setPulsingSegment] = useState<FortuneType | null>(null)
+  const [hasSpun, setHasSpun] = useState(false)
 
-  // Auto-spin when autoSpin prop is true and we haven't started spinning yet
+  // Track if wheel has spun to stop pulsate animation after first spin
   useEffect(() => {
-    if (autoSpin && rotation === 0) {
-      spinWheel()
+    if (isSpinning) {
+      setHasSpun(true)
     }
-  }, [autoSpin])
+  }, [isSpinning])
 
   const spinWheel = () => {
     if (isSpinning) return
 
-    // 5-second spin with smooth easing
-    const spins = 5 + Math.random() * 3
+    // 7-second spin with smooth easing
+    const spins = 6 + Math.random() * 4
     const randomOffset = Math.random() * 360
     const newRotation = spins * 360 + randomOffset
 
@@ -63,34 +56,30 @@ export default function FortuneWheel({
     const segmentIndex = Math.floor((normalizedRotation / 72 + 2.5) % 5)
     const landedSegmentType = WHEEL_SEGMENTS[segmentIndex].type
 
-    // Show post-spin glow for 1 second
+    // Show post-spin glow for 1 second (at 7 second mark)
     setTimeout(() => {
       setPostSpinGlow(true)
-    }, 5000)
+    }, 7000)
 
-    // Call callback after glow completes (5 seconds + 1 second glow)
+    // Call callback after glow completes (7 seconds + 1 second glow)
     setTimeout(() => {
       setPostSpinGlow(false)
       onSpinComplete(landedSegmentType)
-    }, 6000)
-  }
-
-  const handleSegmentClick = (segment: WheelSegment) => {
-    if (!isStatic || isSpinning) return
-
-    // Trigger pulse animation
-    setPulsingSegment(segment.type)
-    setTimeout(() => {
-      setPulsingSegment(null)
-    }, 600)
-
-    onSegmentClick?.(segment.type)
+    }, 8000)
   }
 
   return (
-    <div className="flex flex-col items-center gap-8">
-      {/* Wheel Container - larger at 500px diameter */}
-      <div className="relative" style={{ width: '500px', height: '500px' }}>
+    <div className="flex flex-col items-center">
+      {/* Wheel Container - 500px diameter with pulsate when not spun */}
+      <div
+        className="relative cursor-pointer"
+        style={{
+          width: '500px',
+          height: '500px',
+          animation: !hasSpun && !isSpinning ? 'wheelPulsate 3s ease-in-out infinite' : 'none',
+        }}
+        onClick={() => !isSpinning && spinWheel()}
+      >
         {/* Pointer/Arrow at top */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-3 z-20">
           <div className="relative">
@@ -102,7 +91,7 @@ export default function FortuneWheel({
         {/* Wheel */}
         <div
           className={`w-full h-full rounded-full transition-transform ${
-            isSpinning ? 'duration-[5s]' : ''
+            isSpinning ? 'duration-[7s]' : ''
           }`}
           style={{
             transform: `rotate(${rotation}deg)`,
@@ -114,33 +103,21 @@ export default function FortuneWheel({
             {WHEEL_SEGMENTS.map((segment, index) => {
               const angle = (index * 360) / WHEEL_SEGMENTS.length
               const rad = (angle * Math.PI) / 180
-              const isHovered = isStatic && hoveredSegment === segment.type
               const isGlowing = postSpinGlow && landedSegment === segment.type
-              const isPulsing = pulsingSegment === segment.type
 
               return (
-                <g
-                  key={segment.type}
-                  style={{
-                    animation: isPulsing ? 'segmentPulse 0.6s ease-out' : 'none',
-                    transformOrigin: '50px 50px'
-                  }}
-                >
+                <g key={segment.type}>
                   {/* Segment */}
                   <path
                     d={`M 50 50 L ${50 + 48 * Math.cos(rad)} ${50 + 48 * Math.sin(rad)} A 48 48 0 0 1 ${50 + 48 * Math.cos((rad + (72 * Math.PI) / 180))} ${50 + 48 * Math.sin((rad + (72 * Math.PI) / 180))} Z`}
                     fill={segment.greyShade}
                     stroke="#9333ea"
-                    strokeWidth={isHovered ? "2" : "1"}
-                    opacity={isHovered ? 1 : 0.85}
+                    strokeWidth="1"
+                    opacity={0.85}
                     style={{
-                      filter: isGlowing ? 'brightness(1.3) drop-shadow(0 0 12px rgba(147, 51, 234, 0.6))' : isHovered ? 'brightness(1.15)' : 'none',
+                      filter: isGlowing ? 'brightness(1.3) drop-shadow(0 0 12px rgba(147, 51, 234, 0.6))' : 'none',
                       transition: 'all 0.2s ease',
-                      cursor: isStatic ? 'pointer' : 'default',
                     }}
-                    onMouseEnter={() => isStatic && setHoveredSegment(segment.type)}
-                    onMouseLeave={() => setHoveredSegment(null)}
-                    onClick={() => handleSegmentClick(segment)}
                   />
 
                   {/* Icon */}
@@ -180,45 +157,6 @@ export default function FortuneWheel({
           </svg>
         </div>
       </div>
-
-      {/* Control Buttons or Message */}
-      {isStatic ? (
-        <div className="text-center">
-          <p className="text-neutral-600 text-sm mb-4">Click a section to choose your path</p>
-          {/* Static mode - clickable sections */}
-          <div className="flex gap-2 flex-wrap justify-center">
-            {WHEEL_SEGMENTS.map((seg) => (
-              <button
-                key={seg.type}
-                onClick={() => handleSegmentClick(seg)}
-                disabled={isSpinning}
-                className="px-3 py-1 text-xs rounded border border-neutral-300 hover:border-purple-500 hover:bg-purple-50 transition-all disabled:opacity-50"
-              >
-                {seg.icon} {seg.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <button
-          onClick={spinWheel}
-          disabled={isSpinning}
-          className="btn btn-accent text-lg px-6 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSpinning ? 'The wheel spins...' : 'Let it decide'}
-        </button>
-      )}
-
-      {/* Landing feedback */}
-      {landedSegment && !isSpinning && (
-        <div className="text-center animate-fade-in">
-          <p className="text-sm text-neutral-600">Your path chosen:</p>
-          <p className="text-xl font-semibold text-purple-600">
-            {WHEEL_SEGMENTS.find((s) => s.type === landedSegment)?.icon}{' '}
-            {WHEEL_SEGMENTS.find((s) => s.type === landedSegment)?.label}
-          </p>
-        </div>
-      )}
     </div>
   )
 }

@@ -9,11 +9,9 @@ import AuraButtons from '@/components/AuraButtons'
 import { hasUsedFortune, markFortuneAsUsed } from '@/lib/dailyLimit'
 
 type PageState = 'landing' | 'wheel' | 'questions' | 'result' | 'daily-limit'
-type ControlMode = 'controlled' | 'chaos' | null
 
 export default function Home() {
   const [pageState, setPageState] = useState<PageState>('landing')
-  const [controlMode, setControlMode] = useState<ControlMode>(null)
   const [selectedFortuneType, setSelectedFortuneType] = useState<FortuneType | null>(null)
   const [selections, setSelections] = useState<Record<string, string>>({})
   const [isSpinning, setIsSpinning] = useState(false)
@@ -32,17 +30,8 @@ export default function Home() {
     */
   }, [])
 
-  const handleLandingChoice = (mode: ControlMode) => {
-    setControlMode(mode)
+  const handleStartClick = () => {
     setPageState('wheel')
-
-    if (mode === 'chaos') {
-      // Auto-spin immediately
-      setIsSpinning(true)
-      setTimeout(() => {
-        setIsSpinning(false)
-      }, 5000)
-    }
   }
 
   const handleWheelComplete = (fortuneType: FortuneType) => {
@@ -54,12 +43,6 @@ export default function Home() {
     }, 1500)
   }
 
-  const handleSegmentClick = (fortuneType: FortuneType) => {
-    setSelectedFortuneType(fortuneType)
-    setLandedSegment(fortuneType)
-    setPageState('questions')
-  }
-
   const handleChoicesComplete = (userSelections: Record<string, string>) => {
     setSelections(userSelections)
     // TEMPORARILY DISABLED FOR TESTING
@@ -69,7 +52,6 @@ export default function Home() {
 
   const handleReset = () => {
     setPageState('landing')
-    setControlMode(null)
     setSelectedFortuneType(null)
     setSelections({})
     setIsSpinning(false)
@@ -96,34 +78,40 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        <div className="w-full max-w-4xl">
+        <div className="w-full">
           {/* Landing Page */}
           {pageState === 'landing' && (
             <div className="animate-fade-in flex flex-col items-center justify-center transition-opacity duration-500">
-              <AuraButtons
-                onControlClick={() => handleLandingChoice('controlled')}
-                onChaosClick={() => handleLandingChoice('chaos')}
-              />
+              <button
+                onClick={handleStartClick}
+                className="px-8 py-6 border border-neutral-200 rounded-lg bg-neutral-0 hover:bg-neutral-50 transition-colors duration-200 text-center focus:outline-none focus:ring-2 focus:ring-neutral-400"
+              >
+                <h2 className="text-lg font-semibold text-neutral-950 mb-2">
+                  Begin Your Reading
+                </h2>
+                <p className="text-sm text-neutral-600">
+                  Let the wheel decide your path
+                </p>
+              </button>
             </div>
           )}
 
           {/* Wheel Page */}
-          {pageState === 'wheel' && controlMode && (
-            <div className="animate-fade-in flex flex-col items-center gap-6 transition-opacity duration-500">
-              {/* Instruction Text */}
-              <p className="text-neutral-600 text-sm font-medium">
-                {controlMode === 'controlled' ? 'Choose your method' : 'Let fate guide you'}
+          {pageState === 'wheel' && (
+            <div className="animate-fade-in flex flex-col items-center transition-opacity duration-500">
+              {/* Instruction Text - centered above wheel */}
+              <p className="text-neutral-600 text-sm font-medium mb-8">
+                Let fate guide you
               </p>
 
-              {/* Wheel - auto-spins for chaos mode */}
-              <FortuneWheel
-                onSpinComplete={handleWheelComplete}
-                onSegmentClick={handleSegmentClick}
-                isSpinning={isSpinning}
-                isStatic={controlMode === 'controlled'}
-                landedSegment={landedSegment}
-                autoSpin={controlMode === 'chaos'}
-              />
+              {/* Wheel - centered */}
+              <div className="flex justify-center mb-8">
+                <FortuneWheel
+                  onSpinComplete={handleWheelComplete}
+                  isSpinning={isSpinning}
+                  landedSegment={landedSegment}
+                />
+              </div>
             </div>
           )}
 
