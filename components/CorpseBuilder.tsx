@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import TypewriterText from './TypewriterText'
 
 export interface CorpseChoices {
   character: string | null
@@ -120,30 +121,66 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
     lens: null,
   })
   const [currentSection, setCurrentSection] = useState<'character' | 'timeframe' | 'energy' | 'lens' | 'complete'>('character')
+  const [showTypewriter, setShowTypewriter] = useState(false)
+  const [typewriterComplete, setTypewriterComplete] = useState(false)
 
   // Initialize random character options on mount
   useEffect(() => {
     setCharacterOptions(getRandomCharacterOptions(3))
   }, [])
 
+  // Handle typewriter completion and timing
+  const handleTypewriterComplete = () => {
+    setTypewriterComplete(true)
+    // After typewriter completes, wait before showing next section
+    setTimeout(() => {
+      // The next section will be shown by currentSection state change
+    }, 400)
+  }
+
   const handleCharacterSelect = (char: string) => {
     setSteps({ ...steps, character: char as CorpseBuildSteps['character'] })
-    setCurrentSection('timeframe')
+    setShowTypewriter(true)
+    setTypewriterComplete(false)
+    // After heading appears (300ms) + typewriter shows (variable) + waits (400ms) = move to next section
+    setTimeout(() => {
+      setCurrentSection('timeframe')
+      setShowTypewriter(false)
+      setTypewriterComplete(false)
+    }, 900)
   }
 
   const handleTimeframeSelect = (time: string) => {
     setSteps({ ...steps, timeframe: time as CorpseBuildSteps['timeframe'] })
-    setCurrentSection('energy')
+    setShowTypewriter(true)
+    setTypewriterComplete(false)
+    setTimeout(() => {
+      setCurrentSection('energy')
+      setShowTypewriter(false)
+      setTypewriterComplete(false)
+    }, 900)
   }
 
   const handleEnergySelect = (e: string) => {
     setSteps({ ...steps, energy: e as CorpseBuildSteps['energy'] })
-    setCurrentSection('lens')
+    setShowTypewriter(true)
+    setTypewriterComplete(false)
+    setTimeout(() => {
+      setCurrentSection('lens')
+      setShowTypewriter(false)
+      setTypewriterComplete(false)
+    }, 900)
   }
 
   const handleLensSelect = (l: string) => {
     setSteps({ ...steps, lens: l as CorpseBuildSteps['lens'] })
-    setCurrentSection('complete')
+    setShowTypewriter(true)
+    setTypewriterComplete(false)
+    setTimeout(() => {
+      setCurrentSection('complete')
+      setShowTypewriter(false)
+      setTypewriterComplete(false)
+    }, 900)
   }
 
   const handleRevealFortune = () => {
@@ -179,18 +216,28 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
     <div className="w-full max-w-2xl mx-auto">
       {/* Corpse Display Area - Always visible */}
       <div className="mb-8">
-        {/* Show current choice as heading */}
-        {steps.character && (
-          <h3 className="text-center text-xl font-serif text-neutral-950 mb-4">
-            {ALL_CHARACTER_OPTIONS.find(c => c.key === steps.character)?.label}
+        {/* Show current choice as heading with typewriter effect */}
+        {(steps.character || steps.timeframe || steps.energy || steps.lens) && showTypewriter && (
+          <h3 className="text-center text-xl font-serif text-neutral-950 mb-4 min-h-8">
+            {steps.character && !steps.timeframe && ALL_CHARACTER_OPTIONS.find(c => c.key === steps.character)?.label}
+            {steps.timeframe && !steps.energy && 'What timeline calls to you?'}
+            {steps.energy && !steps.lens && 'What energy guides you?'}
+            {steps.lens && 'Through what lens shall we see?'}
           </h3>
         )}
 
         {/* Corpse body framework - tightly stacked sections */}
-        <div className="mx-auto w-fit font-mono text-xs leading-tight whitespace-pre text-neutral-700 space-y-1">
+        <div className="mx-auto w-fit font-mono text-xs leading-tight whitespace-pre text-neutral-700 space-y-1 min-h-64">
           {/* Head Section */}
           <div className={`transition-all duration-300 ${steps.character ? 'opacity-100 h-auto' : 'opacity-30 h-14'}`}>
-            {steps.character ? (
+            {steps.character && showTypewriter && currentSection === 'character' ? (
+              <TypewriterText
+                text={ASCII_HEADS[steps.character]}
+                speed={35}
+                onComplete={handleTypewriterComplete}
+                showCursor={true}
+              />
+            ) : steps.character ? (
               <div>{ASCII_HEADS[steps.character]}</div>
             ) : (
               <div className="w-20 h-14 border border-dashed border-neutral-300 rounded"></div>
@@ -199,7 +246,14 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
 
           {/* Torso Section */}
           <div className={`transition-all duration-300 ${steps.timeframe ? 'opacity-100 h-auto' : 'opacity-30 h-12'}`}>
-            {steps.timeframe ? (
+            {steps.timeframe && showTypewriter && currentSection === 'timeframe' ? (
+              <TypewriterText
+                text={ASCII_TORSOS[steps.timeframe]}
+                speed={35}
+                onComplete={handleTypewriterComplete}
+                showCursor={true}
+              />
+            ) : steps.timeframe ? (
               <div>{ASCII_TORSOS[steps.timeframe]}</div>
             ) : (
               <div className="w-20 h-12 border border-dashed border-neutral-300 rounded"></div>
@@ -208,7 +262,14 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
 
           {/* Legs Section */}
           <div className={`transition-all duration-300 ${steps.energy ? 'opacity-100 h-auto' : 'opacity-30 h-14'}`}>
-            {steps.energy ? (
+            {steps.energy && showTypewriter && currentSection === 'energy' ? (
+              <TypewriterText
+                text={ASCII_LEGS[steps.energy]}
+                speed={35}
+                onComplete={handleTypewriterComplete}
+                showCursor={true}
+              />
+            ) : steps.energy ? (
               <div>{ASCII_LEGS[steps.energy]}</div>
             ) : (
               <div className="w-20 h-14 border border-dashed border-neutral-300 rounded"></div>
@@ -217,7 +278,14 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
 
           {/* Feet Section */}
           <div className={`transition-all duration-300 ${steps.lens ? 'opacity-100 h-auto' : 'opacity-30 h-8'}`}>
-            {steps.lens ? (
+            {steps.lens && showTypewriter && currentSection === 'lens' ? (
+              <TypewriterText
+                text={ASCII_FEET[steps.lens]}
+                speed={35}
+                onComplete={handleTypewriterComplete}
+                showCursor={true}
+              />
+            ) : steps.lens ? (
               <div>{ASCII_FEET[steps.lens]}</div>
             ) : (
               <div className="w-20 h-8 border border-dashed border-neutral-300 rounded"></div>
