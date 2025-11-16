@@ -5,7 +5,7 @@ import TypewriterText from './TypewriterText'
 import { PERSONAS, getRandomPersonas } from '@/lib/personas'
 import { TIMELINES, getRandomTimelines } from '@/lib/timelines'
 import { ENERGIES, getRandomEnergies } from '@/lib/energies'
-import { ORACLES, getRandomOracles } from '@/lib/oracles'
+import { ORACLES, getRandomOracles, type Oracle } from '@/lib/oracles'
 
 export interface CorpseChoices {
   character: string | null
@@ -51,7 +51,7 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   const [characterOptions, setCharacterOptions] = useState<string[]>([])
   const [timelineOptions, setTimelineOptions] = useState<string[]>([])
   const [energyOptions, setEnergyOptions] = useState<string[]>([])
-  const [oracleOptions, setOracleOptions] = useState<string[]>([])
+  const [oracleOptions, setOracleOptions] = useState<Oracle[]>([])
   const [steps, setSteps] = useState<CorpseBuildSteps>({
     character: null,
     timeframe: null,
@@ -341,11 +341,12 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                   <div className="flex gap-2 flex-col mb-6">
                     {oracleOptions.map((oracle) => (
                       <button
-                        key={oracle}
-                        onClick={() => handleLensSelect(oracle)}
-                        className="px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-center text-sm font-semibold text-neutral-950 capitalize"
+                        key={oracle.name}
+                        onClick={() => handleLensSelect(oracle.name)}
+                        className="px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-center"
                       >
-                        {oracle}
+                        <p className="text-sm font-semibold text-neutral-950 capitalize">{oracle.name}</p>
+                        <p className="text-xs text-neutral-600 opacity-60">{oracle.subtitle}</p>
                       </button>
                     ))}
                   </div>
