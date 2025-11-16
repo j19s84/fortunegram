@@ -43,6 +43,11 @@ const ASCII_FEET = ` / ◯ | ◯ \\
 |_✦___|_✦_|
  ◇◇◇◇◇◇◇◇◇`
 
+// Capitalize each word in a string (sentence case)
+const capitalize = (str: string): string => {
+  return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+}
+
 interface CorpseBuilderProps {
   onComplete: (choices: CorpseChoices) => void
 }
@@ -201,10 +206,10 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
           <div className="card p-8 w-full max-w-md">
             {/* Character heading */}
             {steps.character && (
-              <h3 className={`text-center text-2xl font-serif text-neutral-950 mb-6 transition-opacity duration-500 capitalize ${
+              <h3 className={`text-center text-2xl font-serif text-neutral-950 mb-6 transition-opacity duration-500 ${
                 showTypewriter ? 'opacity-100' : 'opacity-0'
               }`}>
-                {steps.character}
+                {capitalize(steps.character)}
               </h3>
             )}
 
@@ -359,7 +364,7 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
               {/* Complete State */}
               {currentSection === 'complete' && (
                 <div className="animate-fade-in text-center space-y-4">
-                  <p className="text-neutral-600 text-sm">Your exquisite corpse is complete</p>
+                  <p className="text-neutral-600 text-sm">Your daily exquisite corpse is complete</p>
                   <div className="flex gap-3 flex-col">
                     <button
                       onClick={handleRevealFortune}
