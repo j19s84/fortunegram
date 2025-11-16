@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import TypewriterText from './TypewriterText'
 import { PERSONAS, getRandomPersonas } from '@/lib/personas'
 import { TIMELINES, getRandomTimelines } from '@/lib/timelines'
+import { ENERGIES, getRandomEnergies } from '@/lib/energies'
 
 export interface CorpseChoices {
   character: string | null
@@ -15,15 +16,10 @@ export interface CorpseChoices {
 interface CorpseBuildSteps {
   character: string | null
   timeframe: string | null
-  energy: 'bold' | 'gentle' | null
+  energy: string | null
   lens: 'practical' | 'mystical' | null
 }
 
-
-const ENERGY_OPTIONS = [
-  { key: 'bold', label: 'Bold & Direct', desc: 'Confident action' },
-  { key: 'gentle', label: 'Gentle & Flowing', desc: 'Intuitive wisdom' },
-]
 
 const LENS_OPTIONS = [
   { key: 'practical', label: 'The Practical', desc: 'Grounded wisdom' },
@@ -42,16 +38,10 @@ const ASCII_TORSO = ` / ◇ • ◇ \\
 | • ~ • |
  \\ ◇ ◆ /`
 
-const ASCII_LEGS: Record<string, string> = {
-  bold: ` / ▲ | ▲ \\
+const ASCII_LEGS = ` / ▲ | ▲ \\
 | • | • |
 | ◆ | ◆ |
- \\ ▼ | ▼ /`,
-  gentle: ` / ~ | ~ \\
-| ◯ | ◯ |
-| ∿ | ∿ |
- \\ ~ | ~ /`,
-}
+ \\ ▼ | ▼ /`
 
 const ASCII_FEET: Record<string, string> = {
   practical: ` /  •  |  •  \\
@@ -69,6 +59,7 @@ interface CorpseBuilderProps {
 export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   const [characterOptions, setCharacterOptions] = useState<string[]>([])
   const [timelineOptions, setTimelineOptions] = useState<string[]>([])
+  const [energyOptions, setEnergyOptions] = useState<string[]>([])
   const [steps, setSteps] = useState<CorpseBuildSteps>({
     character: null,
     timeframe: null,
@@ -81,10 +72,11 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   const [showQuestion, setShowQuestion] = useState(true)
   const [choiceConfirmation, setChoiceConfirmation] = useState<string | null>(null)
 
-  // Initialize random character and timeline options on mount
+  // Initialize random character, timeline, and energy options on mount
   useEffect(() => {
     setCharacterOptions(getRandomPersonas(3))
     setTimelineOptions(getRandomTimelines(2))
+    setEnergyOptions(getRandomEnergies(2))
   }, [])
 
   const handleTypewriterComplete = () => {
@@ -133,11 +125,10 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   }
 
   const handleEnergySelect = (e: string) => {
-    const selectedLabel = ENERGY_OPTIONS.find(opt => opt.key === e)?.label || e
-    setChoiceConfirmation(selectedLabel)
+    setChoiceConfirmation(e)
     setShowQuestion(false)
     setTimeout(() => {
-      setSteps({ ...steps, energy: e as CorpseBuildSteps['energy'] })
+      setSteps({ ...steps, energy: e })
       setShowTypewriter(true)
       setTypewriterComplete(false)
     }, 500)
@@ -158,14 +149,14 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
     const choices: CorpseChoices = {
       character: steps.character,
       timeframe: steps.timeframe,
-      energy: steps.energy === 'bold' ? 'Bold & Direct' : steps.energy === 'gentle' ? 'Gentle & Flowing' : null,
+      energy: steps.energy,
       lens: steps.lens === 'practical' ? 'The Practical' : steps.lens === 'mystical' ? 'The Mystical' : null,
     }
     onComplete(choices)
   }
 
   const handleShare = async () => {
-    const corpseText = `Check out my Exquisite Corpse fortune:\n\n${steps.character ? ASCII_HEAD : ''}\n${steps.timeframe ? ASCII_TORSO : ''}\n${steps.energy ? ASCII_LEGS[steps.energy] : ''}\n${steps.lens ? ASCII_FEET[steps.lens] : ''}`
+    const corpseText = `Check out my Exquisite Corpse fortune:\n\n${steps.character ? ASCII_HEAD : ''}\n${steps.timeframe ? ASCII_TORSO : ''}\n${steps.energy ? ASCII_LEGS : ''}\n${steps.lens ? ASCII_FEET[steps.lens] : ''}`
 
     if (navigator.share) {
       try {
@@ -264,13 +255,13 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                 <div className={`transition-all duration-300 ${steps.energy ? 'opacity-100 h-auto' : 'opacity-30 h-14'}`}>
                   {steps.energy && showTypewriter && currentSection === 'energy' ? (
                     <TypewriterText
-                      text={ASCII_LEGS[steps.energy]}
+                      text={ASCII_LEGS}
                       speed={50}
                       onComplete={handleTypewriterComplete}
                       showCursor={true}
                     />
                   ) : steps.energy ? (
-                    <div>{ASCII_LEGS[steps.energy]}</div>
+                    <div>{ASCII_LEGS}</div>
                   ) : (
                     <div className="w-24 h-14 border border-dashed border-neutral-300 rounded"></div>
                   )}
@@ -332,18 +323,20 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                   <h4 className="text-center text-lg font-serif text-neutral-950 mb-4">
                     What energy guides you?
                   </h4>
-                  <div className="flex gap-2 flex-col">
-                    {ENERGY_OPTIONS.map((opt) => (
+                  <div className="flex gap-2 flex-col mb-6">
+                    {energyOptions.map((energy) => (
                       <button
-                        key={opt.key}
-                        onClick={() => handleEnergySelect(opt.key)}
-                        className="px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-center text-sm"
+                        key={energy}
+                        onClick={() => handleEnergySelect(energy)}
+                        className="px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-center text-sm font-semibold text-neutral-950 capitalize"
                       >
-                        <p className="font-semibold text-neutral-950">{opt.label}</p>
-                        <p className="text-xs text-neutral-600">{opt.desc}</p>
+                        {energy}
                       </button>
                     ))}
                   </div>
+                  <p className="text-center text-sm text-neutral-500">
+                    Choose the energy that reflects your spirit right now.
+                  </p>
                 </div>
               )}
 
