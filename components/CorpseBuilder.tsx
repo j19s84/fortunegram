@@ -304,7 +304,7 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                     ))}
                   </div>
                   <p className="text-center text-sm text-neutral-500">
-                    Choose the timeframe that speaks to your current question.
+                    Choose a timeframe you want guidance on.
                   </p>
                 </div>
               )}
