@@ -17,10 +17,10 @@ export default function AuraButtons({ onControlClick, onChaosClick }: AuraButton
   }
 
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div className="flex flex-col gap-4 w-80">
       <button
         onClick={handleControlClick}
-        className="w-full px-8 py-6 border border-neutral-200 rounded-lg bg-neutral-0 hover:bg-neutral-50 transition-colors duration-200 text-left focus:outline-none focus:ring-2 focus:ring-neutral-400"
+        className="px-8 py-6 border border-neutral-200 rounded-lg bg-neutral-0 hover:bg-neutral-50 transition-colors duration-200 text-center focus:outline-none focus:ring-2 focus:ring-neutral-400"
       >
         <h2 className="text-lg font-semibold text-neutral-950 mb-2">
           In Control
@@ -32,7 +32,7 @@ export default function AuraButtons({ onControlClick, onChaosClick }: AuraButton
 
       <button
         onClick={handleChaosClick}
-        className="w-full px-8 py-6 border border-neutral-200 rounded-lg bg-neutral-0 hover:bg-neutral-50 transition-colors duration-200 text-left focus:outline-none focus:ring-2 focus:ring-neutral-400"
+        className="px-8 py-6 border border-neutral-200 rounded-lg bg-neutral-0 hover:bg-neutral-50 transition-colors duration-200 text-center focus:outline-none focus:ring-2 focus:ring-neutral-400"
       >
         <h2 className="text-lg font-semibold text-neutral-950 mb-2">
           Totally Not
