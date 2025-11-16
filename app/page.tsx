@@ -99,7 +99,7 @@ export default function Home() {
         <div className="w-full max-w-4xl">
           {/* Landing Page */}
           {pageState === 'landing' && (
-            <div className="animate-fade-in flex flex-col items-center justify-center">
+            <div className="animate-fade-in flex flex-col items-center justify-center transition-opacity duration-500">
               <AuraButtons
                 onControlClick={() => handleLandingChoice('controlled')}
                 onChaosClick={() => handleLandingChoice('chaos')}
@@ -109,14 +109,20 @@ export default function Home() {
 
           {/* Wheel Page */}
           {pageState === 'wheel' && controlMode && (
-            <div className="animate-slide-in-up flex flex-col items-center gap-8">
-              {/* Wheel */}
+            <div className="animate-fade-in flex flex-col items-center gap-6 transition-opacity duration-500">
+              {/* Instruction Text */}
+              <p className="text-neutral-600 text-sm font-medium">
+                {controlMode === 'controlled' ? 'Choose your method' : 'Let fate guide you'}
+              </p>
+
+              {/* Wheel - auto-spins for chaos mode */}
               <FortuneWheel
                 onSpinComplete={handleWheelComplete}
                 onSegmentClick={handleSegmentClick}
                 isSpinning={isSpinning}
                 isStatic={controlMode === 'controlled'}
                 landedSegment={landedSegment}
+                autoSpin={controlMode === 'chaos'}
               />
             </div>
           )}
@@ -124,9 +130,9 @@ export default function Home() {
           {/* Questions Page */}
           {pageState === 'questions' && selectedFortuneType && (
             <div className="animate-slide-in-up">
-              {/* Wheel at top (smaller) */}
+              {/* Wheel at top (smaller - 200px) */}
               <div className="mb-12 flex justify-center">
-                <div className="w-40 h-40">
+                <div style={{ width: '200px', height: '200px' }}>
                   <FortuneWheel
                     onSpinComplete={() => {}}
                     onSegmentClick={() => {}}

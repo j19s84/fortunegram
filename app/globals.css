@@ -194,6 +194,22 @@ body::before {
   }
 }
 
+@keyframes segmentPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-segment-pulse {
+  animation: segmentPulse 0.6s ease-out;
+}
+
 /* Grain texture effect */
 .grain-texture {
   position: relative;

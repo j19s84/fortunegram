@@ -25,6 +25,7 @@ interface FortuneWheelProps {
   onSegmentClick?: (fortuneType: FortuneType) => void
   isStatic?: boolean
   landedSegment?: FortuneType | null
+  autoSpin?: boolean
 }
 
 export default function FortuneWheel({
@@ -33,8 +34,19 @@ export default function FortuneWheel({
   onSegmentClick,
   isStatic = false,
   landedSegment = null,
+  autoSpin = false,
 }: FortuneWheelProps) {
   const [rotation, setRotation] = useState(0)
+  const [hoveredSegment, setHoveredSegment] = useState<FortuneType | null>(null)
+  const [postSpinGlow, setPostSpinGlow] = useState(false)
+  const [pulsingSegment, setPulsingSegment] = useState<FortuneType | null>(null)
+
+  // Auto-spin when autoSpin prop is true and we haven't started spinning yet
+  useEffect(() => {
+    if (autoSpin && rotation === 0) {
+      spinWheel()
+    }
+  }, [autoSpin])
 
   const spinWheel = () => {
     if (isSpinning) return
@@ -49,22 +61,36 @@ export default function FortuneWheel({
     // Determine which segment we landed on
     const normalizedRotation = (newRotation % 360 + 360) % 360
     const segmentIndex = Math.floor((normalizedRotation / 72 + 2.5) % 5)
+    const landedSegmentType = WHEEL_SEGMENTS[segmentIndex].type
 
-    // Call callback after animation completes (5 seconds)
+    // Show post-spin glow for 1 second
     setTimeout(() => {
-      onSpinComplete(WHEEL_SEGMENTS[segmentIndex].type)
+      setPostSpinGlow(true)
     }, 5000)
+
+    // Call callback after glow completes (5 seconds + 1 second glow)
+    setTimeout(() => {
+      setPostSpinGlow(false)
+      onSpinComplete(landedSegmentType)
+    }, 6000)
   }
 
   const handleSegmentClick = (segment: WheelSegment) => {
     if (!isStatic || isSpinning) return
+
+    // Trigger pulse animation
+    setPulsingSegment(segment.type)
+    setTimeout(() => {
+      setPulsingSegment(null)
+    }, 600)
+
     onSegmentClick?.(segment.type)
   }
 
   return (
     <div className="flex flex-col items-center gap-8">
-      {/* Wheel Container */}
-      <div className="relative w-72 h-72">
+      {/* Wheel Container - larger at 500px diameter */}
+      <div className="relative" style={{ width: '500px', height: '500px' }}>
         {/* Pointer/Arrow at top */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-3 z-20">
           <div className="relative">
@@ -88,15 +114,33 @@ export default function FortuneWheel({
             {WHEEL_SEGMENTS.map((segment, index) => {
               const angle = (index * 360) / WHEEL_SEGMENTS.length
               const rad = (angle * Math.PI) / 180
+              const isHovered = isStatic && hoveredSegment === segment.type
+              const isGlowing = postSpinGlow && landedSegment === segment.type
+              const isPulsing = pulsingSegment === segment.type
 
               return (
-                <g key={segment.type}>
+                <g
+                  key={segment.type}
+                  style={{
+                    animation: isPulsing ? 'segmentPulse 0.6s ease-out' : 'none',
+                    transformOrigin: '50px 50px'
+                  }}
+                >
                   {/* Segment */}
                   <path
                     d={`M 50 50 L ${50 + 48 * Math.cos(rad)} ${50 + 48 * Math.sin(rad)} A 48 48 0 0 1 ${50 + 48 * Math.cos((rad + (72 * Math.PI) / 180))} ${50 + 48 * Math.sin((rad + (72 * Math.PI) / 180))} Z`}
                     fill={segment.greyShade}
                     stroke="#9333ea"
-                    strokeWidth="1"
+                    strokeWidth={isHovered ? "2" : "1"}
+                    opacity={isHovered ? 1 : 0.85}
+                    style={{
+                      filter: isGlowing ? 'brightness(1.3) drop-shadow(0 0 12px rgba(147, 51, 234, 0.6))' : isHovered ? 'brightness(1.15)' : 'none',
+                      transition: 'all 0.2s ease',
+                      cursor: isStatic ? 'pointer' : 'default',
+                    }}
+                    onMouseEnter={() => isStatic && setHoveredSegment(segment.type)}
+                    onMouseLeave={() => setHoveredSegment(null)}
+                    onClick={() => handleSegmentClick(segment)}
                   />
 
                   {/* Icon */}
