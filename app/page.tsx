@@ -2,18 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import CorpseBuilder, { type CorpseChoices } from '@/components/CorpseBuilder'
-import MethodSelector, { type DivinationMethod } from '@/components/MethodSelector'
-import RitualReveal from '@/components/RitualReveal'
+import OracleRitual from '@/components/OracleRitual'
 import FortuneDisplay from '@/components/FortuneDisplay'
 import DailyLimitNotice from '@/components/DailyLimitNotice'
 import { hasUsedFortune, markFortuneAsUsed } from '@/lib/dailyLimit'
 
-type PageState = 'landing' | 'corpse-builder' | 'method-selection' | 'ritual' | 'fortune' | 'daily-limit'
+type PageState = 'landing' | 'corpse-builder' | 'oracle-ritual' | 'fortune' | 'daily-limit'
 
 export default function Home() {
   const [pageState, setPageState] = useState<PageState>('landing')
   const [corpseChoices, setCorpseChoices] = useState<CorpseChoices | null>(null)
-  const [selectedMethod, setSelectedMethod] = useState<DivinationMethod | null>(null)
   const [hasUsedToday, setHasUsedToday] = useState(false)
 
   useEffect(() => {
@@ -34,12 +32,7 @@ export default function Home() {
 
   const handleCorpseComplete = (choices: CorpseChoices) => {
     setCorpseChoices(choices)
-    setPageState('method-selection')
-  }
-
-  const handleMethodSelect = (method: DivinationMethod) => {
-    setSelectedMethod(method)
-    setPageState('ritual')
+    setPageState('oracle-ritual')
   }
 
   const handleRitualComplete = () => {
@@ -49,7 +42,6 @@ export default function Home() {
   const handleReset = () => {
     setPageState('landing')
     setCorpseChoices(null)
-    setSelectedMethod(null)
   }
 
   return (
@@ -97,25 +89,17 @@ export default function Home() {
             </div>
           )}
 
-          {/* Method Selection Page */}
-          {pageState === 'method-selection' && (
+          {/* Oracle Ritual Page */}
+          {pageState === 'oracle-ritual' && corpseChoices && (
             <div className="animate-fade-in">
-              <MethodSelector onSelectMethod={handleMethodSelect} />
-            </div>
-          )}
-
-          {/* Ritual Reveal Page */}
-          {pageState === 'ritual' && selectedMethod && (
-            <div className="animate-fade-in">
-              <RitualReveal method={selectedMethod} onComplete={handleRitualComplete} />
+              <OracleRitual oracle={corpseChoices.lens || 'the cards'} onComplete={handleRitualComplete} />
             </div>
           )}
 
           {/* Fortune Display Page */}
-          {pageState === 'fortune' && corpseChoices && selectedMethod && (
+          {pageState === 'fortune' && corpseChoices && (
             <FortuneDisplay
               fortuneChoices={corpseChoices}
-              method={selectedMethod}
               onReset={handleReset}
             />
           )}
@@ -127,7 +111,7 @@ export default function Home() {
         </div>
 
         {/* Navigation */}
-        {(pageState === 'corpse-builder' || pageState === 'method-selection' || pageState === 'ritual' || pageState === 'fortune') && (
+        {(pageState === 'corpse-builder' || pageState === 'oracle-ritual' || pageState === 'fortune') && (
           <button
             onClick={handleReset}
             className="mt-12 btn btn-secondary text-sm"

@@ -13,7 +13,10 @@
       "Bash(git remote add:*)",
       "Bash(git push:*)",
       "Bash(git remote:*)",
-      "WebFetch(domain:fortunegram.vercel.app)"
+      "WebFetch(domain:fortunegram.vercel.app)",
+      "Bash(npm run dev)",
+      "Bash(pkill:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
