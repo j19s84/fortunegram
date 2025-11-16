@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import TypewriterText from './TypewriterText'
 import { PERSONAS, getRandomPersonas } from '@/lib/personas'
+import { TIMELINES, getRandomTimelines } from '@/lib/timelines'
 
 export interface CorpseChoices {
   character: string | null
@@ -13,15 +14,11 @@ export interface CorpseChoices {
 
 interface CorpseBuildSteps {
   character: string | null
-  timeframe: 'now' | 'ahead' | null
+  timeframe: string | null
   energy: 'bold' | 'gentle' | null
   lens: 'practical' | 'mystical' | null
 }
 
-const TIMEFRAME_OPTIONS = [
-  { key: 'now', label: 'Right Now', desc: 'Immediate guidance' },
-  { key: 'ahead', label: 'The Year Ahead', desc: 'Future direction' },
-]
 
 const ENERGY_OPTIONS = [
   { key: 'bold', label: 'Bold & Direct', desc: 'Confident action' },
@@ -40,16 +37,10 @@ const ASCII_HEAD = `   ( • )
    \\ ~ /
     ~~~`
 
-const ASCII_TORSOS: Record<string, string> = {
-  now: ` / ◇ • ◇ \\
+const ASCII_TORSO = ` / ◇ • ◇ \\
 | ◆ ◆ ◆ |
 | • ~ • |
- \\ ◇ ◆ /`,
-  ahead: ` / ◯ ◆ ◯ \\
-| ✦ ◆ ✦ |
-| ◇ • ◇ |
- \\ ◯ ◆ /`,
-}
+ \\ ◇ ◆ /`
 
 const ASCII_LEGS: Record<string, string> = {
   bold: ` / ▲ | ▲ \\
@@ -77,6 +68,7 @@ interface CorpseBuilderProps {
 
 export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   const [characterOptions, setCharacterOptions] = useState<string[]>([])
+  const [timelineOptions, setTimelineOptions] = useState<string[]>([])
   const [steps, setSteps] = useState<CorpseBuildSteps>({
     character: null,
     timeframe: null,
@@ -89,9 +81,10 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   const [showQuestion, setShowQuestion] = useState(true)
   const [choiceConfirmation, setChoiceConfirmation] = useState<string | null>(null)
 
-  // Initialize random character options on mount
+  // Initialize random character and timeline options on mount
   useEffect(() => {
     setCharacterOptions(getRandomPersonas(3))
+    setTimelineOptions(getRandomTimelines(2))
   }, [])
 
   const handleTypewriterComplete = () => {
@@ -130,11 +123,10 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   }
 
   const handleTimeframeSelect = (time: string) => {
-    const selectedLabel = TIMEFRAME_OPTIONS.find(t => t.key === time)?.label || time
-    setChoiceConfirmation(selectedLabel)
+    setChoiceConfirmation(time)
     setShowQuestion(false) // Fade out question
     setTimeout(() => {
-      setSteps({ ...steps, timeframe: time as CorpseBuildSteps['timeframe'] })
+      setSteps({ ...steps, timeframe: time })
       setShowTypewriter(true)
       setTypewriterComplete(false)
     }, 500)
@@ -165,7 +157,7 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   const handleRevealFortune = () => {
     const choices: CorpseChoices = {
       character: steps.character,
-      timeframe: steps.timeframe === 'now' ? 'Right Now' : steps.timeframe === 'ahead' ? 'The Year Ahead' : null,
+      timeframe: steps.timeframe,
       energy: steps.energy === 'bold' ? 'Bold & Direct' : steps.energy === 'gentle' ? 'Gentle & Flowing' : null,
       lens: steps.lens === 'practical' ? 'The Practical' : steps.lens === 'mystical' ? 'The Mystical' : null,
     }
@@ -173,7 +165,7 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   }
 
   const handleShare = async () => {
-    const corpseText = `Check out my Exquisite Corpse fortune:\n\n${steps.character ? ASCII_HEAD : ''}\n${steps.timeframe ? ASCII_TORSOS[steps.timeframe] : ''}\n${steps.energy ? ASCII_LEGS[steps.energy] : ''}\n${steps.lens ? ASCII_FEET[steps.lens] : ''}`
+    const corpseText = `Check out my Exquisite Corpse fortune:\n\n${steps.character ? ASCII_HEAD : ''}\n${steps.timeframe ? ASCII_TORSO : ''}\n${steps.energy ? ASCII_LEGS[steps.energy] : ''}\n${steps.lens ? ASCII_FEET[steps.lens] : ''}`
 
     if (navigator.share) {
       try {
@@ -202,10 +194,7 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
           <h3 className="text-center text-4xl font-serif text-neutral-950 mb-16">
             Who seeks wisdom today?
           </h3>
-          <p className="text-center text-sm text-neutral-500 mb-8">
-            Choose a persona that is resonating with your mindset today.
-          </p>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-4 mb-8">
             {characterOptions.map((char) => (
               <button
                 key={char}
@@ -216,6 +205,9 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
               </button>
             ))}
           </div>
+          <p className="text-center text-sm text-neutral-500">
+            Choose a persona that is resonating with your mindset today.
+          </p>
         </div>
       )}
 
@@ -256,13 +248,13 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                 <div className={`transition-all duration-300 ${steps.timeframe ? 'opacity-100 h-auto' : 'opacity-30 h-12'}`}>
                   {steps.timeframe && showTypewriter && currentSection === 'timeframe' ? (
                     <TypewriterText
-                      text={ASCII_TORSOS[steps.timeframe]}
+                      text={ASCII_TORSO}
                       speed={50}
                       onComplete={handleTypewriterComplete}
                       showCursor={true}
                     />
                   ) : steps.timeframe ? (
-                    <div>{ASCII_TORSOS[steps.timeframe]}</div>
+                    <div>{ASCII_TORSO}</div>
                   ) : (
                     <div className="w-24 h-12 border border-dashed border-neutral-300 rounded"></div>
                   )}
@@ -317,18 +309,20 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                   <h4 className="text-center text-lg font-serif text-neutral-950 mb-4">
                     What timeline calls to you?
                   </h4>
-                  <div className="flex gap-2 flex-col">
-                    {TIMEFRAME_OPTIONS.map((opt) => (
+                  <div className="flex gap-2 flex-col mb-6">
+                    {timelineOptions.map((timeline) => (
                       <button
-                        key={opt.key}
-                        onClick={() => handleTimeframeSelect(opt.key)}
-                        className="px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-center text-sm"
+                        key={timeline}
+                        onClick={() => handleTimeframeSelect(timeline)}
+                        className="px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-center text-sm font-semibold text-neutral-950 capitalize"
                       >
-                        <p className="font-semibold text-neutral-950">{opt.label}</p>
-                        <p className="text-xs text-neutral-600">{opt.desc}</p>
+                        {timeline}
                       </button>
                     ))}
                   </div>
+                  <p className="text-center text-sm text-neutral-500">
+                    Choose the timeframe that speaks to your current question.
+                  </p>
                 </div>
               )}
 
