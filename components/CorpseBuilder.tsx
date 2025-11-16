@@ -327,7 +327,7 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                     ))}
                   </div>
                   <p className="text-center text-sm text-neutral-500">
-                    Choose the energy that reflects your spirit right now.
+                    Choose an energy that is grounding you today.
                   </p>
                 </div>
               )}
