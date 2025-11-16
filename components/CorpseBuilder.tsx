@@ -5,6 +5,7 @@ import TypewriterText from './TypewriterText'
 import { PERSONAS, getRandomPersonas } from '@/lib/personas'
 import { TIMELINES, getRandomTimelines } from '@/lib/timelines'
 import { ENERGIES, getRandomEnergies } from '@/lib/energies'
+import { ORACLES, getRandomOracles } from '@/lib/oracles'
 
 export interface CorpseChoices {
   character: string | null
@@ -17,14 +18,9 @@ interface CorpseBuildSteps {
   character: string | null
   timeframe: string | null
   energy: string | null
-  lens: 'practical' | 'mystical' | null
+  lens: string | null
 }
 
-
-const LENS_OPTIONS = [
-  { key: 'practical', label: 'The Practical', desc: 'Grounded wisdom' },
-  { key: 'mystical', label: 'The Mystical', desc: 'Cosmic insights' },
-]
 
 // Generic head design that works for any persona
 const ASCII_HEAD = `   ( • )
@@ -43,14 +39,9 @@ const ASCII_LEGS = ` / ▲ | ▲ \\
 | ◆ | ◆ |
  \\ ▼ | ▼ /`
 
-const ASCII_FEET: Record<string, string> = {
-  practical: ` /  •  |  •  \\
-|__◆___|__◆__|
- ▓▓▓▓▓▓▓▓▓`,
-  mystical: ` / ◯ | ◯ \\
+const ASCII_FEET = ` / ◯ | ◯ \\
 |_✦___|_✦_|
- ◇◇◇◇◇◇◇◇◇`,
-}
+ ◇◇◇◇◇◇◇◇◇`
 
 interface CorpseBuilderProps {
   onComplete: (choices: CorpseChoices) => void
@@ -60,6 +51,7 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   const [characterOptions, setCharacterOptions] = useState<string[]>([])
   const [timelineOptions, setTimelineOptions] = useState<string[]>([])
   const [energyOptions, setEnergyOptions] = useState<string[]>([])
+  const [oracleOptions, setOracleOptions] = useState<string[]>([])
   const [steps, setSteps] = useState<CorpseBuildSteps>({
     character: null,
     timeframe: null,
@@ -72,11 +64,12 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   const [showQuestion, setShowQuestion] = useState(true)
   const [choiceConfirmation, setChoiceConfirmation] = useState<string | null>(null)
 
-  // Initialize random character, timeline, and energy options on mount
+  // Initialize random character, timeline, energy, and oracle options on mount
   useEffect(() => {
     setCharacterOptions(getRandomPersonas(3))
     setTimelineOptions(getRandomTimelines(2))
     setEnergyOptions(getRandomEnergies(2))
+    setOracleOptions(getRandomOracles(2))
   }, [])
 
   const handleTypewriterComplete = () => {
@@ -135,11 +128,10 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
   }
 
   const handleLensSelect = (l: string) => {
-    const selectedLabel = LENS_OPTIONS.find(opt => opt.key === l)?.label || l
-    setChoiceConfirmation(selectedLabel)
+    setChoiceConfirmation(l)
     setShowQuestion(false)
     setTimeout(() => {
-      setSteps({ ...steps, lens: l as CorpseBuildSteps['lens'] })
+      setSteps({ ...steps, lens: l })
       setShowTypewriter(true)
       setTypewriterComplete(false)
     }, 500)
@@ -150,13 +142,13 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
       character: steps.character,
       timeframe: steps.timeframe,
       energy: steps.energy,
-      lens: steps.lens === 'practical' ? 'The Practical' : steps.lens === 'mystical' ? 'The Mystical' : null,
+      lens: steps.lens,
     }
     onComplete(choices)
   }
 
   const handleShare = async () => {
-    const corpseText = `Check out my Exquisite Corpse fortune:\n\n${steps.character ? ASCII_HEAD : ''}\n${steps.timeframe ? ASCII_TORSO : ''}\n${steps.energy ? ASCII_LEGS : ''}\n${steps.lens ? ASCII_FEET[steps.lens] : ''}`
+    const corpseText = `Check out my Exquisite Corpse fortune:\n\n${steps.character ? ASCII_HEAD : ''}\n${steps.timeframe ? ASCII_TORSO : ''}\n${steps.energy ? ASCII_LEGS : ''}\n${steps.lens ? ASCII_FEET : ''}`
 
     if (navigator.share) {
       try {
@@ -271,13 +263,13 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                 <div className={`transition-all duration-300 ${steps.lens ? 'opacity-100 h-auto' : 'opacity-30 h-10'}`}>
                   {steps.lens && showTypewriter && currentSection === 'lens' ? (
                     <TypewriterText
-                      text={ASCII_FEET[steps.lens]}
+                      text={ASCII_FEET}
                       speed={50}
                       onComplete={handleTypewriterComplete}
                       showCursor={true}
                     />
                   ) : steps.lens ? (
-                    <div>{ASCII_FEET[steps.lens]}</div>
+                    <div>{ASCII_FEET}</div>
                   ) : (
                     <div className="w-24 h-10 border border-dashed border-neutral-300 rounded"></div>
                   )}
@@ -340,24 +332,26 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                 </div>
               )}
 
-              {/* Section 4: Lens */}
+              {/* Section 4: Oracle/Lens */}
               {currentSection === 'lens' && (
                 <div className={`transition-opacity duration-500 ${showQuestion ? 'opacity-100' : 'opacity-0'} space-y-4`}>
                   <h4 className="text-center text-lg font-serif text-neutral-950 mb-4">
-                    Through what lens shall we see?
+                    What oracle speaks today?
                   </h4>
-                  <div className="flex gap-2 flex-col">
-                    {LENS_OPTIONS.map((opt) => (
+                  <div className="flex gap-2 flex-col mb-6">
+                    {oracleOptions.map((oracle) => (
                       <button
-                        key={opt.key}
-                        onClick={() => handleLensSelect(opt.key)}
-                        className="px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-center text-sm"
+                        key={oracle}
+                        onClick={() => handleLensSelect(oracle)}
+                        className="px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-center text-sm font-semibold text-neutral-950 capitalize"
                       >
-                        <p className="font-semibold text-neutral-950">{opt.label}</p>
-                        <p className="text-xs text-neutral-600">{opt.desc}</p>
+                        {oracle}
                       </button>
                     ))}
                   </div>
+                  <p className="text-center text-sm text-neutral-500">
+                    Choose the voice that will deliver your message.
+                  </p>
                 </div>
               )}
 
