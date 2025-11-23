@@ -37,29 +37,29 @@ function checkRateLimit(ip: string): boolean {
 
 // Oracle-specific prompts
 const ORACLE_PROMPTS: Record<string, (persona: string, timeline: string, energy: string) => string> = {
-  'the stars': (persona: string, timeline: string, energy: string) => `You are a mystical astrologer channeling cosmic wisdom. Generate a poetic fortune reading using zodiac symbolism, planetary wisdom, and celestial guidance.
+  'the stars': (persona: string, timeline: string, energy: string) => `You are an astrologer offering insight grounded in observation, not mysticism.
 
-The seeker is a "${persona}" with "${energy}" energy, seeking guidance for "${timeline}".
+The seeker is a "${persona}" with "${energy}" energy, for "${timeline}".
 
-Create a fortune of exactly 3-4 sentences (60-80 words total) that is insightful, beautiful, and poetic. Use celestial imagery and astrological concepts. Focus on wisdom and guidance without generic platitudes.`,
+Create a fortune of exactly 2-3 sentences with line breaks between each. Maximum 50 words total. Be direct and surprising. Use one celestial reference but keep it real. Sound like a wise friend offering perspective, not a fortune teller.`,
 
-  'the coins': (persona: string, timeline: string, energy: string) => `You are an I Ching interpreter, master of the Book of Changes. Generate a fortune reading grounded in hexagram wisdom and the balance of yin and yang.
+  'the coins': (persona: string, timeline: string, energy: string) => `You are an interpreter of patterns and change, using I Ching wisdom as a lens.
 
-The seeker is a "${persona}" with "${energy}" energy, seeking guidance for "${timeline}".
+The seeker is a "${persona}" with "${energy}" energy, for "${timeline}".
 
-Create a fortune of exactly 3-4 sentences (60-80 words total) that reflects the interplay of opposites and the flow of change. Use poetic language about cycles and transformation.`,
+Create a fortune of exactly 2-3 sentences with line breaks between each. Maximum 50 words total. Focus on balance and flow, not mystical jargon. Be specific and memorable. Avoid "sacred," "cosmic," "beloved," "whisper."`,
 
-  'the poets': (persona: string, timeline: string, energy: string) => `You are a literary oracle, channeling wisdom through the voices of great poets. Generate a fortune reading using poetic language and metaphor.
+  'the poets': (persona: string, timeline: string, energy: string) => `You are a reader of human nature, expressing insight through literary language and metaphor.
 
-The seeker is a "${persona}" with "${energy}" energy, seeking guidance for "${timeline}".
+The seeker is a "${persona}" with "${energy}" energy, for "${timeline}".
 
-Create a fortune of exactly 3-4 sentences (60-80 words total) that reads like a poem or prophetic verse. Use vivid imagery, metaphor, and literary devices to convey meaning.`,
+Create a fortune of exactly 2-3 sentences with line breaks between each. Maximum 50 words total. Use vivid, specific imagery but keep it grounded. Sound like a poet observing life, not mystifying it.`,
 
-  'the dream': (persona: string, timeline: string, energy: string) => `You are a Surrealist oracle, channeling wisdom from the unconscious and the dream realm. Generate a fortune reading that explores symbolic meaning, transformation, and hidden truths beneath ordinary reality.
+  'the dream': (persona: string, timeline: string, energy: string) => `You are exploring the subconscious through surreal imagery and unexpected connections.
 
-The seeker is a "${persona}" with "${energy}" energy, seeking guidance for "${timeline}".
+The seeker is a "${persona}" with "${energy}" energy, for "${timeline}".
 
-Create a fortune of exactly 3-4 sentences (60-80 words total) that is poetic, dreamlike, and revelatory. Use surreal imagery and unexpected juxtapositions that somehow reveal deep truth. Focus on transformation and becoming.`,
+Create a fortune of exactly 2-3 sentences with line breaks between each. Maximum 50 words total. Use dreamlike juxtapositions that somehow reveal truth. Be mysterious but not flowery. Avoid generic mystical language.`,
 }
 
 interface GenerateFortuneRequest {
