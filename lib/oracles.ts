@@ -3,20 +3,15 @@ export interface Oracle {
   subtitle: string
 }
 
+// ONLY these 7 oracles are allowed in Fortunegram
 export const ORACLES: Oracle[] = [
   { name: "the cards", subtitle: "tarot reading" },
+  { name: "the numbers", subtitle: "numerology" },
   { name: "the stones", subtitle: "rune casting" },
   { name: "the stars", subtitle: "astrology" },
-  { name: "the numbers", subtitle: "numerology" },
-  { name: "the cut-up", subtitle: "dada technique" },
-  { name: "the bones", subtitle: "divination" },
-  { name: "the tea leaves", subtitle: "tasseomancy" },
-  { name: "the mirror", subtitle: "scrying" },
-  { name: "the smoke", subtitle: "sign reading" },
   { name: "the coins", subtitle: "i ching" },
-  { name: "the water", subtitle: "hydromancy" },
-  { name: "the ink", subtitle: "bibliomancy" },
-  { name: "the poets", subtitle: "literary wisdom" },
+  { name: "the poets", subtitle: "literary oracle" },
+  { name: "the dream", subtitle: "surrealism" },
 ]
 
 export const getRandomOracles = (count: number = 2): Oracle[] => {

@@ -1,0 +1,218 @@
+{
+  "fehu": {
+    "name": "Fehu",
+    "symbol": "ᚠ",
+    "ascii": "F",
+    "keyword": "Wealth",
+    "meaning": "Abundance, prosperity, new beginnings, potential",
+    "detailed_meaning": "Fehu is the rune of mobile wealth—cattle, money, energy that flows and grows. It speaks of new opportunities, material gain, and the power of potential realized. This is a time of increase, but remember: true wealth includes what you give, not just what you keep. Nurture what you've been given.",
+    "reversed": "Loss, greed, material obsession, blocked abundance"
+  },
+  "uruz": {
+    "name": "Uruz",
+    "symbol": "ᚢ",
+    "ascii": "U",
+    "keyword": "Strength",
+    "meaning": "Power, vigor, courage, wild potential, untamed energy",
+    "detailed_meaning": "Uruz represents the primal strength of the aurochs—raw power, vitality, and untamed courage. This rune calls you to harness your inner force, to move forward boldly despite fear. It's about testing your limits and discovering capabilities you didn't know you possessed. Channel this wild energy with intention.",
+    "reversed": "Weakness, blocked energy, helplessness, illness"
+  },
+  "thurisaz": {
+    "name": "Thurisaz",
+    "symbol": "ᚦ",
+    "ascii": "TH",
+    "keyword": "Gateway",
+    "meaning": "Thorn, protection, boundaries, confrontation, necessary conflict",
+    "detailed_meaning": "Thurisaz is the thorn that protects—sharp, protective, and boundary-setting. It speaks of necessary confrontations that clear the way forward. Like a gate, it stands between what was and what will be. Don't shy from the discomfort; the thorn's prick often leads to healing. Establish your boundaries.",
+    "reversed": "Vulnerability, crossed boundaries, unprotected, chaos"
+  },
+  "ansuz": {
+    "name": "Ansuz",
+    "symbol": "ᚨ",
+    "ascii": "A",
+    "keyword": "Communication",
+    "meaning": "Wisdom, divine inspiration, messages, clarity, breath of life",
+    "detailed_meaning": "Ansuz is the breath of the gods—divine inspiration, clear communication, and ancestral wisdom. This rune brings clarity to confusion, voice to silence. It's a time to listen deeply, speak truthfully, and receive messages from unexpected sources. Your words have power; use them wisely.",
+    "reversed": "Miscommunication, blocked truth, silenced voice, confusion"
+  },
+  "raido": {
+    "name": "Raido",
+    "symbol": "ᚱ",
+    "ascii": "R",
+    "keyword": "Journey",
+    "meaning": "Travel, movement, journey, communication, flow, direction",
+    "detailed_meaning": "Raido is the rune of the ride—journey, movement, and the rhythms of travel. It speaks of both physical and spiritual journeys, of finding your pace and direction. This is momentum, progress, and the joy of movement. Whether literal travel or internal transformation, you're in motion. Stay present with the journey.",
+    "reversed": "Stagnation, blocked progress, wrong direction, disrupted flow"
+  },
+  "kenaz": {
+    "name": "Kenaz",
+    "symbol": "ᚲ",
+    "ascii": "K",
+    "keyword": "Fire",
+    "meaning": "Illumination, creativity, passion, knowledge, transformation",
+    "detailed_meaning": "Kenaz is the torch—illumination, creative fire, and transformative passion. This rune kindles what lies dormant within you. It speaks of craft, skill, and the power to shape your world. The fire burns away what no longer serves, revealing what's essential. Let your creativity blaze.",
+    "reversed": "Darkness, creative block, exhaustion, loss of passion"
+  },
+  "gebo": {
+    "name": "Gebo",
+    "symbol": "ᚳ",
+    "ascii": "G",
+    "keyword": "Gift",
+    "meaning": "Gift, generosity, exchange, balance, reciprocity, union",
+    "detailed_meaning": "Gebo is the rune of the gift—generosity, exchange, and balanced reciprocity. It speaks of what flows between people: love, knowledge, energy. True gifts carry no obligation, yet they create connection. This rune asks: what will you give? What are you willing to receive? Balance flows in both directions.",
+    "reversed": "Imbalance, selfishness, stagnation, withheld generosity"
+  },
+  "wunjo": {
+    "name": "Wunjo",
+    "symbol": "ᚹ",
+    "ascii": "W",
+    "keyword": "Joy",
+    "meaning": "Joy, harmony, fulfillment, pleasure, happiness, comfort",
+    "detailed_meaning": "Wunjo is the rune of joy and fellowship—happiness, harmony, and fulfillment. It speaks of times when things align, when effort bears fruit, when you feel at home. This is pleasure without excess, joy that deepens relationships. Let yourself feel the lightness. You've earned this moment of grace.",
+    "reversed": "Sorrow, discord, hardship, broken fellowship"
+  },
+  "hagalaz": {
+    "name": "Hagalaz",
+    "symbol": "ᚼ",
+    "ascii": "H",
+    "keyword": "Hail",
+    "meaning": "Disruption, transformation, crystallization, sudden change",
+    "detailed_meaning": "Hagalaz is hail—destructive yet purifying, sudden and transformative. This rune speaks of disruptions that seem catastrophic but are actually necessary. Like a hailstorm that strips trees bare, it clears away what's no longer needed. From this breaking comes crystallization, new form. Trust the storm.",
+    "reversed": "Uncontrolled chaos, forced change, loss without meaning"
+  },
+  "nauthiz": {
+    "name": "Nauthiz",
+    "symbol": "ᚾ",
+    "ascii": "N",
+    "keyword": "Necessity",
+    "meaning": "Constraint, need, friction, urgency, fire-starting",
+    "detailed_meaning": "Nauthiz is the rune of necessity—the friction that creates urgency, the constraints that force growth. It speaks of doing what must be done, regardless of comfort. Yet within this pressure lies creative fire. Constraints breed innovation. What necessity is asking you to grow right now?",
+    "reversed": "Despair, powerlessness, overwhelming burden, victim mindset"
+  },
+  "isa": {
+    "name": "Isa",
+    "symbol": "ᛁ",
+    "ascii": "I",
+    "keyword": "Ice",
+    "meaning": "Stillness, clarity, pause, preservation, crystallization",
+    "detailed_meaning": "Isa is ice—crystalline stillness and clarity. This rune calls for pause, for stillness, for seeing with absolute clarity. It speaks of preservation, of taking time before action. Ice preserves; it also reveals what lies beneath when everything else falls away. This is a moment to breathe, to observe, to wait.",
+    "reversed": "Blockage, stagnation, numbness, frozen progress"
+  },
+  "jera": {
+    "name": "Jera",
+    "symbol": "ᛃ",
+    "ascii": "J",
+    "keyword": "Year",
+    "meaning": "Harvest, cycle, cyclical time, reaping what you sow, seasons",
+    "detailed_meaning": "Jera is the year—the turning cycle, the harvest, the natural rhythms of growth and completion. This rune speaks of reaping what you've sown. Your efforts are bearing fruit. But it also reminds: seasons change. Nothing lasts forever. Honor the cycles; understand that all things turn. Your harvest is coming.",
+    "reversed": "Missed opportunity, delayed harvest, bad timing"
+  },
+  "eihwaz": {
+    "name": "Eihwaz",
+    "symbol": "ᛇ",
+    "ascii": "EI",
+    "keyword": "Yew",
+    "meaning": "Transformation, death and rebirth, endurance, connection",
+    "detailed_meaning": "Eihwaz is the yew tree—ancient, enduring, and forever renewing itself. This rune speaks of deep transformation, of dying to the old self to be reborn anew. The yew's roots dig deep into the earth while its branches reach to the heavens. You are more resilient than you know. Let old patterns die.",
+    "reversed": "Stagnation in transformation, resistance to change, unfinished death"
+  },
+  "perthro": {
+    "name": "Perthro",
+    "symbol": "ᛈ",
+    "ascii": "P",
+    "keyword": "Mystery",
+    "meaning": "Fate, chance, mystery, hidden potential, secret joy",
+    "detailed_meaning": "Perthro is the dice cup—mystery, fate, and hidden potential. This rune speaks of the unknown, of forces beyond your control, of secret joys waiting to be discovered. Like a throw of dice, there's an element of chance, but also of readiness. What hidden gifts are waiting in the darkness for you to find?",
+    "reversed": "Meaninglessness, chaos, unwelcome surprises"
+  },
+  "algiz": {
+    "name": "Algiz",
+    "symbol": "ᛉ",
+    "ascii": "Z",
+    "keyword": "Protection",
+    "meaning": "Defense, protection, divine shield, aligned with higher power",
+    "detailed_meaning": "Algiz is the elk's antlers—a natural defense, spiritual protection, and connection to higher power. This rune speaks of being protected, of standing firm in your truth, of finding strength in alignment with something greater than yourself. You are not alone. There is a force moving with you.",
+    "reversed": "Vulnerability, lost protection, disconnection from spirit"
+  },
+  "sowilo": {
+    "name": "Sowilo",
+    "symbol": "ᛊ",
+    "ascii": "S",
+    "keyword": "Sun",
+    "meaning": "Success, clarity, energy, wholeness, triumph, vitality",
+    "detailed_meaning": "Sowilo is the sun—brilliant, clarifying, and life-giving. This rune brings success, clarity, and radiant energy. Everything it touches is illuminated and vitalized. This is a time of triumph, of things coming to light, of wholeness. You've been moving through shadow; now step into the light. Your clarity is returning.",
+    "reversed": "Darkness, lack of clarity, hidden obstacles, false light"
+  },
+  "tiwaz": {
+    "name": "Tiwaz",
+    "symbol": "ᛏ",
+    "ascii": "TI",
+    "keyword": "Warrior",
+    "meaning": "Justice, courage, victory, sacrifice, divine order, discipline",
+    "detailed_meaning": "Tiwaz is the warrior—courageous, just, and willing to sacrifice for what's right. This rune speaks of standing up for your truth, of fighting for justice, of channeling courage into right action. But it also speaks of sacrifice: sometimes winning means letting something go. Warrior, know what's worth fighting for.",
+    "reversed": "Cowardice, injustice, defeat, weak will"
+  },
+  "berkano": {
+    "name": "Berkano",
+    "symbol": "ᛒ",
+    "ascii": "B",
+    "keyword": "Birch",
+    "meaning": "Growth, fertility, new beginnings, birth, nurturing, healing",
+    "detailed_meaning": "Berkano is the birch tree—new growth, fertile potential, and nurturing care. This rune speaks of birth in all forms: new ideas, new projects, new chapters of your life. It's about creating safe space for growth, nurturing what's tender and young. Something new is being born in you. Tend it gently.",
+    "reversed": "Stagnation, barrenness, blocked growth, lack of nurture"
+  },
+  "ehwaz": {
+    "name": "Ehwaz",
+    "symbol": "ᛖ",
+    "ascii": "E",
+    "keyword": "Horse",
+    "meaning": "Movement, trust, partnership, harmony, progress, flow",
+    "detailed_meaning": "Ehwaz is the horse—swift movement, deep trust, and harmonious partnership. This rune speaks of journeys taken in tandem, of trusting what carries you forward, of flowing with partners rather than against them. It's about the synchronicity of movement, the rhythm of forward progress. Let yourself be carried.",
+    "reversed": "Blocked progress, broken trust, disharmony, unbalanced partnership"
+  },
+  "mannaz": {
+    "name": "Mannaz",
+    "symbol": "ᛘ",
+    "ascii": "M",
+    "keyword": "Self",
+    "meaning": "Humanity, self, inner strength, social order, family",
+    "detailed_meaning": "Mannaz is the self—your own humanity, inner strength, and place in the human family. This rune asks: who are you? What strength lives within you? It speaks of your connection to others, to community, to the larger story of humanity. You are both individual and interconnected. Honor both truths.",
+    "reversed": "Selfishness, weakness, isolation, loss of self"
+  },
+  "laguz": {
+    "name": "Laguz",
+    "symbol": "ᛚ",
+    "ascii": "L",
+    "keyword": "Water",
+    "meaning": "Flow, intuition, healing, emotion, imagination, depth",
+    "detailed_meaning": "Laguz is water—flowing, intuitive, and deeply healing. This rune speaks of emotions, of intuition deeper than logic, of the currents that move beneath the surface. Like water, you may be adapting, flowing around obstacles. Trust your intuition. Your feelings are wisdom. Let yourself be moved by deeper currents.",
+    "reversed": "Blocked emotion, poor intuition, stagnation, emotional overwhelm"
+  },
+  "ingwaz": {
+    "name": "Ingwaz",
+    "symbol": "ᛝ",
+    "ascii": "NG",
+    "keyword": "Potential",
+    "meaning": "Potential, completion, new beginnings, family, fertile peace",
+    "detailed_meaning": "Ingwaz is potential at the moment before manifestation—complete, whole, and pregnant with possibility. This rune speaks of an ending that brings peace, a completion that makes space for new beginnings. Something is coming to wholeness. From this peace will spring new life. You're at the threshold.",
+    "reversed": "Blocked potential, incompletion, stagnant peace"
+  },
+  "othala": {
+    "name": "Othala",
+    "symbol": "ᚩ",
+    "ascii": "O",
+    "keyword": "Heritage",
+    "meaning": "Home, heritage, ancestral property, inheritance, spiritual home",
+    "detailed_meaning": "Othala is the ancestral home—heritage, lineage, and spiritual inheritance. This rune speaks of what you've inherited, what's been passed down, what roots you. It's about claiming your place, your legacy, your belonging. You carry your ancestors' wisdom. What will you do with this inheritance? What will you pass on?",
+    "reversed": "Homelessness, disconnection from roots, lost heritage"
+  },
+  "dagaz": {
+    "name": "Dagaz",
+    "symbol": "ᛞ",
+    "ascii": "D",
+    "keyword": "Day",
+    "meaning": "Breakthrough, new dawn, clarity, transformation, duality balanced",
+    "detailed_meaning": "Dagaz is the dawn—the breakthrough moment when darkness transforms into light. This rune speaks of sudden clarity, of things clicking into place, of the moment when everything changes. Light and dark are balanced at dawn. You're at a turning point. The new day is breaking. Step forward into it.",
+    "reversed": "Slow progress, lack of clarity, false dawn"
+  }
+}

@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import LoadingSpinner from './LoadingSpinner'
+import LoadingAnimation from './LoadingAnimation'
 import RitualReveal from './RitualReveal'
 import { type DivinationMethod } from './MethodSelector'
 
 interface OracleRitualProps {
   oracle: string
-  onComplete: () => void
+  onComplete: (method: DivinationMethod, card?: any) => void
 }
 
 // Map oracle names to divination methods
@@ -21,38 +21,27 @@ const ORACLE_TO_METHOD: Record<string, DivinationMethod> = {
   'the tea leaves': 'oracle',
   'the mirror': 'oracle',
   'the smoke': 'oracle',
-  'the coins': 'runes',
+  'the coins': 'dadaism', // I Ching - maps to dadaism for display
   'the water': 'oracle',
   'the ink': 'oracle',
-  'the poets': 'dadaism',
+  'the poets': 'oracle', // Literary Oracle - maps to oracle for display
 }
 
 export default function OracleRitual({ oracle, onComplete }: OracleRitualProps) {
-  const [loading, setLoading] = useState(true)
-  const [method, setMethod] = useState<DivinationMethod | null>(null)
-
   useEffect(() => {
-    // Simulate loading for 2.5 seconds
+    // Initial loading animation (0.5 seconds), then ritual reveal (1-2.5 seconds)
+    // Total: 1.5-3 seconds total before fortune display
+    const divMethod = ORACLE_TO_METHOD[oracle] || 'oracle'
     const timer = setTimeout(() => {
-      const divMethod = ORACLE_TO_METHOD[oracle] || 'oracle'
-      setMethod(divMethod)
-      setLoading(false)
-    }, 2500)
+      onComplete(divMethod)
+    }, 3500) // Total time: 500ms loading + 3000ms ritual = 3.5s
 
     return () => clearTimeout(timer)
-  }, [oracle])
-
-  if (loading) {
-    return <LoadingSpinner />
-  }
-
-  if (!method) {
-    return null
-  }
+  }, [oracle, onComplete])
 
   return (
     <div className="animate-fade-in">
-      <RitualReveal method={method} onComplete={onComplete} />
+      <LoadingAnimation oracle={oracle} />
     </div>
   )
 }

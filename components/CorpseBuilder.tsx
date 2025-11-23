@@ -6,12 +6,14 @@ import { PERSONAS, getRandomPersonas } from '@/lib/personas'
 import { TIMELINES, getRandomTimelines } from '@/lib/timelines'
 import { ENERGIES, getRandomEnergies } from '@/lib/energies'
 import { ORACLES, getRandomOracles, type Oracle } from '@/lib/oracles'
+import { getHeadASCII, getTorsoASCII, getLegsASCII } from '@/lib/ascii-corpse-builder'
 
 export interface CorpseChoices {
   character: string | null
   timeframe: string | null
   energy: string | null
   lens: string | null
+  corpse?: string
 }
 
 interface CorpseBuildSteps {
@@ -20,28 +22,6 @@ interface CorpseBuildSteps {
   energy: string | null
   lens: string | null
 }
-
-
-// Generic head design that works for any persona
-const ASCII_HEAD = `   ( • )
-  / ~ \\
-  | ◇ |
-   \\ ~ /
-    ~~~`
-
-const ASCII_TORSO = ` / ◇ • ◇ \\
-| ◆ ◆ ◆ |
-| • ~ • |
- \\ ◇ ◆ /`
-
-const ASCII_LEGS = ` / ▲ | ▲ \\
-| • | • |
-| ◆ | ◆ |
- \\ ▼ | ▼ /`
-
-const ASCII_FEET = ` / ◯ | ◯ \\
-|_✦___|_✦_|
- ◇◇◇◇◇◇◇◇◇`
 
 // Capitalize each word in a string (sentence case)
 const capitalize = (str: string): string => {
@@ -64,12 +44,16 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
     lens: null,
   })
   const [currentSection, setCurrentSection] = useState<'character' | 'timeframe' | 'energy' | 'lens' | 'complete'>('character')
-  const [showTypewriter, setShowTypewriter] = useState(false)
-  const [typewriterComplete, setTypewriterComplete] = useState(false)
   const [showQuestion, setShowQuestion] = useState(true)
   const [choiceConfirmation, setChoiceConfirmation] = useState<string | null>(null)
+  const [accumulatedCorpse, setAccumulatedCorpse] = useState<string>('')
+  const [newPart, setNewPart] = useState<string>('')
+  const [newPartAnimating, setNewPartAnimating] = useState(false)
+  const [showTypewriterQuestion, setShowTypewriterQuestion] = useState(false)
+  const [typewriterQuestionDone, setTypewriterQuestionDone] = useState(false)
+  const [typewriterCaptionDone, setTypewriterCaptionDone] = useState(false)
 
-  // Initialize random character, timeline, energy, and oracle options on mount
+  // Initialize random character, timeline, energy, oracle options on mount
   useEffect(() => {
     setCharacterOptions(getRandomPersonas(3))
     setTimelineOptions(getRandomTimelines(2))
@@ -77,48 +61,80 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
     setOracleOptions(getRandomOracles(2))
   }, [])
 
-  const handleTypewriterComplete = () => {
-    setTypewriterComplete(true)
-    // Move to next section after typewriter completes + brief pause
-    setTimeout(() => {
-      // Clear choice confirmation
-      setChoiceConfirmation(null)
-      // Move to next section
-      if (currentSection === 'character') {
-        setCurrentSection('timeframe')
-      } else if (currentSection === 'timeframe') {
-        setCurrentSection('energy')
-      } else if (currentSection === 'energy') {
-        setCurrentSection('lens')
-      } else if (currentSection === 'lens') {
-        setCurrentSection('complete')
-      }
-      setShowTypewriter(false)
-      setTypewriterComplete(false)
-      // Fade in new question after a moment
-      setTimeout(() => {
-        setShowQuestion(true)
-      }, 200)
-    }, 400) // Brief pause after typing completes before moving to next section
-  }
+  // Auto-advance to fortune after corpse is complete
+  useEffect(() => {
+    if (currentSection === 'complete') {
+      const timer = setTimeout(() => {
+        handleRevealFortune()
+      }, 1500) // 1.5 second delay to show completed corpse
+
+      return () => clearTimeout(timer)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSection])
+
+
+  // Show typewriter animation when entering a new section
+  useEffect(() => {
+    if (currentSection !== 'character' && currentSection !== 'complete') {
+      setShowTypewriterQuestion(true)
+      setTypewriterQuestionDone(false)
+      setTypewriterCaptionDone(false)
+    }
+  }, [currentSection])
+
 
   const handleCharacterSelect = (char: string) => {
     setChoiceConfirmation(char)
     setShowQuestion(false) // Fade out question
     setTimeout(() => {
-      setSteps({ ...steps, character: char })
-      setShowTypewriter(true)
-      setTypewriterComplete(false)
-    }, 500) // Wait for fade-out, then show confirmation + start typewriter
+      setSteps((prevSteps) => {
+        const newSteps = { ...prevSteps, character: char }
+        // Get the head ASCII for this character
+        const head = getHeadASCII(char)
+        setAccumulatedCorpse(head)
+        setNewPart(head)
+        setNewPartAnimating(true)
+        // Now transition to next section
+        setTimeout(() => {
+          setChoiceConfirmation(null)
+          setCurrentSection('timeframe')
+          setShowTypewriterQuestion(true)
+          setTypewriterQuestionDone(false)
+          setTypewriterCaptionDone(false)
+          setTimeout(() => {
+            setShowQuestion(true)
+          }, 200)
+        }, 400)
+        return newSteps
+      })
+    }, 500)
   }
 
   const handleTimeframeSelect = (time: string) => {
     setChoiceConfirmation(time)
     setShowQuestion(false) // Fade out question
     setTimeout(() => {
-      setSteps({ ...steps, timeframe: time })
-      setShowTypewriter(true)
-      setTypewriterComplete(false)
+      setSteps((prevSteps) => {
+        const newSteps = { ...prevSteps, timeframe: time }
+        // Get the torso ASCII for this timeline
+        const torso = getTorsoASCII(time)
+        // Append to accumulated
+        setAccumulatedCorpse((prev) => prev + '\n' + torso)
+        setNewPart(torso)
+        setNewPartAnimating(true)
+        setTimeout(() => {
+          setChoiceConfirmation(null)
+          setCurrentSection('energy')
+          setShowTypewriterQuestion(true)
+          setTypewriterQuestionDone(false)
+          setTypewriterCaptionDone(false)
+          setTimeout(() => {
+            setShowQuestion(true)
+          }, 200)
+        }, 400)
+        return newSteps
+      })
     }, 500)
   }
 
@@ -126,9 +142,26 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
     setChoiceConfirmation(e)
     setShowQuestion(false)
     setTimeout(() => {
-      setSteps({ ...steps, energy: e })
-      setShowTypewriter(true)
-      setTypewriterComplete(false)
+      setSteps((prevSteps) => {
+        const newSteps = { ...prevSteps, energy: e }
+        // Get the legs ASCII for this energy
+        const legs = getLegsASCII(e)
+        // Append to accumulated
+        setAccumulatedCorpse((prev) => prev + '\n' + legs)
+        setNewPart(legs)
+        setNewPartAnimating(true)
+        setTimeout(() => {
+          setChoiceConfirmation(null)
+          setCurrentSection('lens')
+          setShowTypewriterQuestion(true)
+          setTypewriterQuestionDone(false)
+          setTypewriterCaptionDone(false)
+          setTimeout(() => {
+            setShowQuestion(true)
+          }, 200)
+        }, 400)
+        return newSteps
+      })
     }, 500)
   }
 
@@ -136,9 +169,16 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
     setChoiceConfirmation(l)
     setShowQuestion(false)
     setTimeout(() => {
-      setSteps({ ...steps, lens: l })
-      setShowTypewriter(true)
-      setTypewriterComplete(false)
+      setSteps((prevSteps) => {
+        const newSteps = { ...prevSteps, lens: l }
+        // Oracle selection doesn't add a new body part - corpse is complete
+        setTimeout(() => {
+          setChoiceConfirmation(null)
+          setCurrentSection('complete')
+          setShowQuestion(true)
+        }, 400)
+        return newSteps
+      })
     }, 500)
   }
 
@@ -148,12 +188,13 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
       timeframe: steps.timeframe,
       energy: steps.energy,
       lens: steps.lens,
+      corpse: accumulatedCorpse,
     }
     onComplete(choices)
   }
 
   const handleShare = async () => {
-    const corpseText = `Check out my Exquisite Corpse fortune:\n\n${steps.character ? ASCII_HEAD : ''}\n${steps.timeframe ? ASCII_TORSO : ''}\n${steps.energy ? ASCII_LEGS : ''}\n${steps.lens ? ASCII_FEET : ''}`
+    const corpseText = `Check out my Exquisite Corpse fortune:\n\n${accumulatedCorpse}`
 
     if (navigator.share) {
       try {
@@ -183,11 +224,12 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
             Who seeks wisdom today?
           </h3>
           <div className="grid grid-cols-3 gap-4 mb-8">
-            {characterOptions.map((char) => (
+            {characterOptions.map((char, idx) => (
               <button
                 key={char}
                 onClick={() => handleCharacterSelect(char)}
-                className="px-6 py-4 text-sm border border-neutral-300 rounded-lg hover:bg-purple-50 hover:border-purple-400 transition-all text-center font-medium capitalize"
+                className="btn btn-secondary capitalize animate-scale-in"
+                style={{animationDelay: `${idx * 0.1}s`}}
               >
                 {char}
               </button>
@@ -206,81 +248,31 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
           <div className="card p-8 w-full max-w-md">
             {/* Character heading */}
             {steps.character && (
-              <h3 className={`text-center text-2xl font-serif text-neutral-950 mb-6 transition-opacity duration-500 ${
-                showTypewriter ? 'opacity-100' : 'opacity-0'
-              }`}>
+              <h3 className="text-center text-2xl font-serif text-neutral-950 mb-6">
                 {capitalize(steps.character)}
               </h3>
             )}
 
-            {/* Corpse body framework - tightly stacked sections */}
-            <div className="flex justify-center mb-8">
-              <div className="font-mono text-sm leading-snug whitespace-pre text-neutral-700 space-y-0">
-                {/* Head Section */}
-                <div className={`transition-all duration-300 ${steps.character ? 'opacity-100 h-auto' : 'opacity-30 h-16'}`}>
-                  {steps.character && showTypewriter && currentSection === 'character' ? (
+            {/* Progressive Corpse Display - accumulated + new part animating */}
+            {accumulatedCorpse && (
+              <div className="flex justify-center mb-8 min-h-32">
+                <div className="font-mono text-sm leading-snug whitespace-pre text-neutral-700">
+                  {/* Show accumulated corpse (static) */}
+                  {accumulatedCorpse.replace(newPart, '')}
+                  {/* Show new part with typewriter animation if animating */}
+                  {newPartAnimating ? (
                     <TypewriterText
-                      text={ASCII_HEAD}
-                      speed={50}
-                      onComplete={handleTypewriterComplete}
-                      showCursor={true}
+                      text={newPart}
+                      speed={15}
+                      showCursor={false}
+                      onComplete={() => setNewPartAnimating(false)}
                     />
-                  ) : steps.character ? (
-                    <div>{ASCII_HEAD}</div>
                   ) : (
-                    <div className="w-24 h-16 border border-dashed border-neutral-300 rounded"></div>
-                  )}
-                </div>
-
-                {/* Torso Section */}
-                <div className={`transition-all duration-300 ${steps.timeframe ? 'opacity-100 h-auto' : 'opacity-30 h-12'}`}>
-                  {steps.timeframe && showTypewriter && currentSection === 'timeframe' ? (
-                    <TypewriterText
-                      text={ASCII_TORSO}
-                      speed={50}
-                      onComplete={handleTypewriterComplete}
-                      showCursor={true}
-                    />
-                  ) : steps.timeframe ? (
-                    <div>{ASCII_TORSO}</div>
-                  ) : (
-                    <div className="w-24 h-12 border border-dashed border-neutral-300 rounded"></div>
-                  )}
-                </div>
-
-                {/* Legs Section */}
-                <div className={`transition-all duration-300 ${steps.energy ? 'opacity-100 h-auto' : 'opacity-30 h-14'}`}>
-                  {steps.energy && showTypewriter && currentSection === 'energy' ? (
-                    <TypewriterText
-                      text={ASCII_LEGS}
-                      speed={50}
-                      onComplete={handleTypewriterComplete}
-                      showCursor={true}
-                    />
-                  ) : steps.energy ? (
-                    <div>{ASCII_LEGS}</div>
-                  ) : (
-                    <div className="w-24 h-14 border border-dashed border-neutral-300 rounded"></div>
-                  )}
-                </div>
-
-                {/* Feet Section */}
-                <div className={`transition-all duration-300 ${steps.lens ? 'opacity-100 h-auto' : 'opacity-30 h-10'}`}>
-                  {steps.lens && showTypewriter && currentSection === 'lens' ? (
-                    <TypewriterText
-                      text={ASCII_FEET}
-                      speed={50}
-                      onComplete={handleTypewriterComplete}
-                      showCursor={true}
-                    />
-                  ) : steps.lens ? (
-                    <div>{ASCII_FEET}</div>
-                  ) : (
-                    <div className="w-24 h-10 border border-dashed border-neutral-300 rounded"></div>
+                    newPart
                   )}
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Questions and buttons below corpse */}
             <div className="border-t border-neutral-200 pt-6 mt-6 min-h-48">
@@ -297,6 +289,9 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                   <h4 className="text-center text-lg font-serif text-neutral-950 mb-4">
                     What timeline calls to you?
                   </h4>
+                  <p className="text-center text-sm text-neutral-500">
+                    Choose a timeframe you want guidance on.
+                  </p>
                   <div className="flex gap-2 flex-col mb-6">
                     {timelineOptions.map((timeline) => (
                       <button
@@ -308,9 +303,6 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                       </button>
                     ))}
                   </div>
-                  <p className="text-center text-sm text-neutral-500">
-                    Choose a timeframe you want guidance on.
-                  </p>
                 </div>
               )}
 
@@ -320,6 +312,9 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                   <h4 className="text-center text-lg font-serif text-neutral-950 mb-4">
                     What energy guides you?
                   </h4>
+                  <p className="text-center text-sm text-neutral-500">
+                    Choose an energy that is grounding you today.
+                  </p>
                   <div className="flex gap-2 flex-col mb-6">
                     {energyOptions.map((energy) => (
                       <button
@@ -331,9 +326,6 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                       </button>
                     ))}
                   </div>
-                  <p className="text-center text-sm text-neutral-500">
-                    Choose an energy that is grounding you today.
-                  </p>
                 </div>
               )}
 
@@ -343,6 +335,9 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                   <h4 className="text-center text-lg font-serif text-neutral-950 mb-4">
                     What oracle speaks today?
                   </h4>
+                  <p className="text-center text-sm text-neutral-500">
+                    Choose the voice that will deliver your message.
+                  </p>
                   <div className="flex gap-2 flex-col mb-6">
                     {oracleOptions.map((oracle) => (
                       <button
@@ -355,30 +350,14 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                       </button>
                     ))}
                   </div>
-                  <p className="text-center text-sm text-neutral-500">
-                    Choose the voice that will deliver your message.
-                  </p>
                 </div>
               )}
 
-              {/* Complete State */}
+              {/* Complete State - Auto-advances to fortune after 1.5 seconds */}
               {currentSection === 'complete' && (
-                <div className="animate-fade-in text-center space-y-4">
+                <div className="animate-fade-in text-center space-y-6">
                   <p className="text-neutral-600 text-sm">Your daily exquisite corpse is complete</p>
-                  <div className="flex gap-3 flex-col">
-                    <button
-                      onClick={handleRevealFortune}
-                      className="btn btn-primary text-base px-6 py-3"
-                    >
-                      Reveal Your Fortune
-                    </button>
-                    <button
-                      onClick={handleShare}
-                      className="btn btn-secondary text-base px-6 py-3"
-                    >
-                      Share
-                    </button>
-                  </div>
+                  <p className="text-neutral-500 text-xs italic">Revealing your fortune...</p>
                 </div>
               )}
             </div>

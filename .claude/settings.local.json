@@ -16,7 +16,21 @@
       "WebFetch(domain:fortunegram.vercel.app)",
       "Bash(npm run dev)",
       "Bash(pkill:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(lsof:*)",
+      "Bash(cat:*)",
+      "Bash(for oracle in \"the stars\" \"the coins\" \"the poets\" \"the cut-up\")",
+      "Bash(do echo \"=== Testing: $oracle ===\")",
+      "Bash(done)",
+      "Bash(xargs kill:*)",
+      "Bash(killall -9 node:*)",
+      "Bash(npm run dev:*)",
+      "Bash(for port in 3000 3001)",
+      "Bash(do echo \"=== Port $port ===\")",
+      "Bash(killall:*)",
+      "Bash(git pull:*)"
     ],
     "deny": [],
     "ask": []

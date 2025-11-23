@@ -1,71 +1,209 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import type { CorpseChoices } from './CorpseBuilder'
 import type { DivinationMethod } from './MethodSelector'
+import { getTarotCards, getRandomTarotCard, getCardWisdom } from '@/lib/tarot'
+import type { TarotCardWithImages } from '@/lib/tarot'
+import { selectNumber } from '@/lib/numerology'
+import type { NumerologyNumber } from '@/lib/numerology'
+import { selectRune } from '@/lib/runes'
+import type { RuneData } from '@/lib/runes'
+
+// Helper function to map oracle names to their tradition names
+const getOracleDisplayName = (oracleName: string | null): string => {
+  if (!oracleName) return ''
+
+  const oracleMap: Record<string, string> = {
+    'the cards': 'The Cards (Tarot)',
+    'the stones': 'The Stones (Runes)',
+    'the coins': 'The Coins (I Ching)',
+    'the stars': 'The Stars (Astrology)',
+    'the numbers': 'The Numbers (Numerology)',
+    'the poets': 'The Poets (Literary Oracle)',
+    'the dream': 'The Dream (Surrealism)',
+  }
+
+  return oracleMap[oracleName.toLowerCase()] || oracleName
+}
+
+// Helper function to generate a Dada corpse interpretation
+const generateCorpseInterpretation = (corpseText: string | undefined, choices: CorpseChoices): string => {
+  if (!corpseText) {
+    return `Your hybrid form whispers of transformation. In the collision of ${choices.character} with ${choices.energy} energy, find the message meant for you. The cut-up reveals: your path forward embraces the unexpected.`
+  }
+
+  // Generate different interpretations based on the corpse
+  const interpretations = [
+    `Your exquisite corpse speaks: a creature born of ${choices.character}'s spirit now guides you through ${choices.timeframe} with ${choices.energy} energy. What emerges is strange and true—your transformation is already underway.`,
+    `The hybrid form you've assembled reveals: strength from unexpected places, a convergence of the ${choices.character} and the ${choices.energy}. Trust this strange wisdom for your ${choices.timeframe}—the absurd path is sometimes the truest one.`,
+    `Your cut-up creation suggests a daring shift: the ${choices.character} within you, powered by ${choices.energy}, must venture into ${choices.timeframe} without fear. The corpse you've built from fragments points toward liberation.`,
+    `In this assembled form—part ${choices.character}, part dream—lies a secret: ${choices.timeframe} asks you to embrace the contradictions. Your ${choices.energy} energy becomes the binding force holding meaning together from chaos.`,
+  ]
+
+  return interpretations[Math.floor(Math.random() * interpretations.length)]
+}
 
 interface FortuneDisplayProps {
   fortuneChoices?: CorpseChoices
   fortuneType?: string
   selections?: Record<string, string>
   method?: DivinationMethod
+  tarotCard?: TarotCardWithImages
   onReset?: () => void
 }
 
-export default function FortuneDisplay({ fortuneChoices, method, onReset }: FortuneDisplayProps) {
+export default function FortuneDisplay({ fortuneChoices, method, tarotCard: initialCard, onReset }: FortuneDisplayProps) {
   const [fortune, setFortune] = useState<string>('')
   const [isRevealing, setIsRevealing] = useState(false)
+  const [tarotCard, setTarotCard] = useState<TarotCardWithImages | null>(initialCard || null)
+  const [numerologyNumber, setNumerologyNumber] = useState<NumerologyNumber | null>(null)
+  const [runeData, setRuneData] = useState<RuneData | null>(null)
 
   useEffect(() => {
     // Generate fortune based on corpse choices and divination method
     if (fortuneChoices) {
-      setTimeout(() => {
-        const generatedFortune = generateContextualFortune(fortuneChoices, method)
+      setTimeout(async () => {
+        const generatedFortune = await generateContextualFortune(fortuneChoices, method, initialCard)
         setFortune(generatedFortune)
         setIsRevealing(true)
+        if (initialCard) {
+          setTarotCard(initialCard)
+        }
       }, 500)
     }
-  }, [fortuneChoices, method])
+  }, [fortuneChoices, method, initialCard])
 
-  const generateContextualFortune = (choices: CorpseChoices, method?: DivinationMethod): string => {
-    const methodName = method ? method.charAt(0).toUpperCase() + method.slice(1) : 'The cards'
+  const generateContextualFortune = async (choices: CorpseChoices, method?: DivinationMethod, card?: TarotCardWithImages): Promise<string> => {
+    const oracleName = choices.lens || 'the cards'
 
-    // Method-specific fortune templates
-    const fortunesByMethod: Record<DivinationMethod, string[]> = {
-      tarot: [
-        `The ${methodName} reveal: Your ${choices.character} is drawn to seek wisdom ${choices.timeframe?.toLowerCase()}. The cards whisper: move with ${choices.energy?.toLowerCase()} intention, viewing through ${choices.lens?.toLowerCase()} truth.`,
-        `In the arcana's wisdom, ${choices.character} finds their path. The moment of ${choices.timeframe?.toLowerCase()} calls for ${choices.energy?.toLowerCase()} action guided by ${choices.lens?.toLowerCase()} sight.`,
-        `The cards speak through ${choices.character}. What the universe shows you ${choices.timeframe?.toLowerCase()}: embrace ${choices.energy?.toLowerCase()} energy, trust ${choices.lens?.toLowerCase()} knowing.`,
+    // Special handling for Surrealist oracle: interpret the exquisite corpse
+    if (oracleName === 'the dream' && method === 'surrealism') {
+      return generateCorpseInterpretation(choices.corpse, choices)
+    }
+
+    // List of oracles that use Claude AI
+    const aiOracleMap: Record<string, boolean> = {
+      'the stars': true,
+      'the coins': true,
+      'the poets': true,
+    }
+
+    // Check if we should use API for this oracle
+    if (aiOracleMap[oracleName]) {
+      try {
+        const response = await fetch('/api/generate-fortune', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            character: choices.character,
+            timeframe: choices.timeframe,
+            energy: choices.energy,
+            lens: oracleName,
+          }),
+        })
+
+        const data = await response.json()
+        if (data.success && data.fortune) {
+          return data.fortune
+        } else if (!response.ok) {
+          console.error('API error:', data.error)
+          return data.error || 'The oracle fell silent. Please try again.'
+        }
+      } catch (error) {
+        console.error('Fortune API error:', error)
+        return 'The stars are obscured today. Please try again.'
+      }
+    }
+
+    // For non-AI oracles, use template-based fortunes
+    // For tarot, use provided card or load new one
+    let cardWisdom = ''
+    if (method === 'tarot') {
+      try {
+        const cardToUse = card || getRandomTarotCard(await getTarotCards())
+        if (cardToUse) {
+          setTarotCard(cardToUse)
+          cardWisdom = getCardWisdom(cardToUse)
+        }
+      } catch (error) {
+        console.error('Failed to load tarot card:', error)
+      }
+    }
+
+    // For numerology, select a number
+    let numberData: NumerologyNumber | null = null
+    if (method === 'numerology') {
+      numberData = selectNumber()
+      setNumerologyNumber(numberData)
+    }
+
+    // For runes, select a rune
+    let selectedRune: RuneData | null = null
+    if (method === 'runes') {
+      selectedRune = selectRune()
+      setRuneData(selectedRune)
+    }
+
+    // Method-specific fortune templates - pure guidance without literal choice listing
+    const fortunesByMethod: Record<DivinationMethod, (wisdom?: string | NumerologyNumber | RuneData) => string[]> = {
+      tarot: (wisdom?: string | NumerologyNumber | RuneData) => {
+        const wisdomLine = (typeof wisdom === 'string' ? wisdom : '') || 'Trust the path before you.'
+        return [
+          `${wisdomLine} This wisdom guides your path forward with clarity and purpose.`,
+          `The cards reveal: ${wisdomLine} Let this be your witness in the moments ahead.`,
+          `The universe whispers: ${wisdomLine} See this truth illuminated in your journey.`,
+          `The oracle speaks: ${wisdomLine} Trust what unfolds before you now.`,
+        ]
+      },
+      oracle: (wisdom?: string | NumerologyNumber | RuneData) => [
+        `Ancient knowing awakens within you. Step forward with grace and trust the wisdom that emerges.`,
+        `The universe sends currents of possibility through your path. See through eyes of clarity and understanding.`,
+        `Your truth unfolds with revelation. Trust the vision that emerges from within.`,
       ],
-      oracle: [
-        `The oracle's voice flows through ${choices.character}: In this ${choices.timeframe?.toLowerCase()} moment, step forward with ${choices.energy?.toLowerCase()} grace. Let ${choices.lens?.toLowerCase()} wisdom be your guide.`,
-        `Ancient knowing speaks: ${choices.character} awakens to possibility. The universe sends ${choices.energy?.toLowerCase()} currents through your ${choices.timeframe?.toLowerCase()} path. See through ${choices.lens?.toLowerCase()} eyes.`,
-        `The oracle whispers through ${choices.character}'s form: Your ${choices.timeframe?.toLowerCase()} unfolds with ${choices.energy?.toLowerCase()} revelation. Trust the ${choices.lens?.toLowerCase()} vision that emerges.`,
+      numerology: (num?: string | NumerologyNumber | RuneData) => {
+        const number = (typeof num === 'object' && !('symbol' in num) ? num : null) as NumerologyNumber | null
+        if (!number) return [`The numbers speak, but remain silent for now. Trust the rhythm.`]
+        return [
+          `${number.number}—${number.keyword}. ${number.detailed_meaning.substring(0, 120)}... This is your moment to embody this energy and transform your path.`,
+          `You are ${number.number}—${number.keyword}. ${number.detailed_meaning.substring(0, 100)}... Your path is illuminated by this cosmic truth.`,
+          `${number.number}—${number.keyword} emerges as your guide. ${number.detailed_meaning.substring(0, 110)}... Let this wisdom be your compass.`,
+        ]
+      },
+      runes: (rune?: string | NumerologyNumber | RuneData) => {
+        const runeObj = (typeof rune === 'object' && 'symbol' in rune ? rune : null) as RuneData | null
+        if (!runeObj) return [`The stones remain silent. The runes will speak in their own time.`]
+        return [
+          `${runeObj.name}—${runeObj.keyword}. ${runeObj.detailed_meaning.substring(0, 120)}... This ancient stone speaks truth to your journey ahead.`,
+          `${runeObj.name}—${runeObj.keyword}. ${runeObj.detailed_meaning.substring(0, 110)}... The Elder Futhark reveals itself as your guide.`,
+          `${runeObj.name} emerges as your sign. ${runeObj.detailed_meaning.substring(0, 120)}... The stones have spoken. Trust the path that reveals itself.`,
+        ]
+      },
+      astrology: (wisdom?: string | NumerologyNumber | RuneData) => [
+        `The stars align with your intention. This passage asks for movement and presence. Trust the cosmic counsel that guides you.`,
+        `Your constellation burns bright. The stellar influence brings wisdom and clarity. Trust what the heavens show you.`,
+        `The planets speak to your spirit. In this season, harness the cosmic force that flows through you. The astral plane reveals what you need to know.`,
       ],
-      numerology: [
-        `The numbers align for ${choices.character}: In this ${choices.timeframe?.toLowerCase()} cycle, your path is lit by ${choices.energy?.toLowerCase()} vibration. Understand through ${choices.lens?.toLowerCase()} numerology.`,
-        `Numerological truth: ${choices.character} moves in rhythm with ${choices.energy?.toLowerCase()} frequency ${choices.timeframe?.toLowerCase()}. The numbers reveal: see all through ${choices.lens?.toLowerCase()} calculation.`,
-        `The sum of forces within ${choices.character}—this ${choices.timeframe?.toLowerCase()} asks for ${choices.energy?.toLowerCase()} expression. The number speaks: trust your ${choices.lens?.toLowerCase()} math.`,
-      ],
-      astrology: [
-        `The stars align for ${choices.character}: This ${choices.timeframe?.toLowerCase()} passage requires ${choices.energy?.toLowerCase()} movement. The cosmos counsels you—perceive through ${choices.lens?.toLowerCase()} celestial light.`,
-        `Astrological decree: ${choices.character}'s constellation burns bright. Your ${choices.timeframe?.toLowerCase()} brings ${choices.energy?.toLowerCase()} stellar influence. The heavens show: trust your ${choices.lens?.toLowerCase()} sight of the sky.`,
-        `The planets speak through ${choices.character}. In this ${choices.timeframe?.toLowerCase()} season, harness ${choices.energy?.toLowerCase()} cosmic force. The astral plane reveals through your ${choices.lens?.toLowerCase()} understanding.`,
-      ],
-      runes: [
-        `The runes cast for ${choices.character}: Ancient stones speak of your ${choices.timeframe?.toLowerCase()} journey. Move with ${choices.energy?.toLowerCase()} runic force, guided by ${choices.lens?.toLowerCase()} futhark wisdom.`,
-        `Runic truth carved in stone: ${choices.character} stands at this ${choices.timeframe?.toLowerCase()} threshold with ${choices.energy?.toLowerCase()} power. The Elder Futhark reveals—see through ${choices.lens?.toLowerCase()} runes.`,
-        `The stones have spoken through ${choices.character}. This ${choices.timeframe?.toLowerCase()} moment calls for ${choices.energy?.toLowerCase()} action. The runes counsel: trust your ${choices.lens?.toLowerCase()} reading.`,
-      ],
-      dadaism: [
-        `The word dissolves into meaning around ${choices.character}. In this ${choices.timeframe?.toLowerCase()} chaos, find ${choices.energy?.toLowerCase()} freedom. The cut-up speaks: all is ${choices.lens?.toLowerCase()} and nothing.`,
-        `Dada whispers through ${choices.character}: There is no logic to this ${choices.timeframe?.toLowerCase()}, only ${choices.energy?.toLowerCase()} absurdity. Yet meaning emerges—see it through ${choices.lens?.toLowerCase()} randomness.`,
-        `The chance meeting of words around ${choices.character}: This ${choices.timeframe?.toLowerCase()} is ${choices.energy?.toLowerCase()} only. In the cut and paste of existence, find your ${choices.lens?.toLowerCase()} truth.`,
+      surrealism: (wisdom?: string | NumerologyNumber | RuneData) => [
+        `The dream reveals what waking cannot. In the irrational lies your deepest truth. Follow the strange logic of your inner landscape.`,
+        `Here, time bends and forms shift like water. Your exquisite corpse speaks of becoming. Trust the wisdom of the unconscious unfolding.`,
+        `In the realm between worlds, opposites dance together. Your path blooms from contradiction. Let the surreal show you what is most real.`,
       ],
     }
 
     // Get fortunes for the selected method, or use tarot as default
-    const methodFortunes = method && fortunesByMethod[method] ? fortunesByMethod[method] : fortunesByMethod.tarot
+    let wisdomData: string | NumerologyNumber | RuneData | undefined
+    if (method === 'numerology') {
+      wisdomData = numberData || undefined
+    } else if (method === 'runes') {
+      wisdomData = selectedRune || undefined
+    } else {
+      wisdomData = cardWisdom
+    }
+    const methodFortunes = method && fortunesByMethod[method]
+      ? fortunesByMethod[method](wisdomData)
+      : fortunesByMethod.tarot(cardWisdom)
     return methodFortunes[Math.floor(Math.random() * methodFortunes.length)]
   }
 
@@ -80,57 +218,197 @@ export default function FortuneDisplay({ fortuneChoices, method, onReset }: Fort
   }
 
   return (
-    <div className={`w-full max-w-2xl mx-auto ${isRevealing ? 'animate-fade-in' : ''}`}>
-      {/* Header */}
-      <div className="text-center mb-8">
-        <div className="inline-block px-3 py-1 bg-neutral-100 rounded-full mb-4">
+    <div className={`w-full max-w-2xl mx-auto px-4 py-12 relative z-10 ${isRevealing ? 'animate-fade-in' : ''}`}>
+      {/* 1. Page Header */}
+      <div className="text-center mb-12 animate-slide-in-up">
+        <h1 className="text-5xl md:text-6xl font-serif font-bold text-neutral-950 mb-2 tracking-tight">Fortunegram</h1>
+        <p className="text-neutral-600 font-serif italic">Daily directions from the beyond.</p>
+      </div>
+
+      {/* 2. "YOUR READING" Label */}
+      <div className="text-center mb-10 animate-scale-in" style={{animationDelay: '0.1s'}}>
+        <div className="inline-block px-4 py-2 card backdrop-blur-lg">
           <span className="text-xs font-semibold text-neutral-600 uppercase tracking-wide">
-            Your Exquisite Corpse
+            Your Reading
           </span>
         </div>
       </div>
 
-      {/* Fortune Card */}
-      <div className="card p-8 mb-8">
-        <p className="text-2xl leading-relaxed text-neutral-800 font-serif text-center italic">
-          &quot;{fortune}&quot;
-        </p>
+      {/* 3. Oracle Card - displays the divination object (tarot, rune, number, etc) */}
+      <div className="card p-12 mb-12 flex flex-col items-center animate-scale-in" style={{animationDelay: '0.2s'}}>
+        {/* AI Oracle Card Display */}
+        {method === 'astrology' && fortuneChoices?.lens === 'the stars' && (
+          <>
+            <div className="font-mono text-sm leading-relaxed text-neutral-700 mb-6 whitespace-pre">
+{`   *  .-.  *
+  .  (   )
+    . \`~' .
+  *     *`}
+            </div>
+            <h2 className="text-2xl font-serif text-neutral-950 mb-2">The Stars</h2>
+            <p className="text-sm text-neutral-600">Astrology</p>
+          </>
+        )}
+
+        {method === 'dadaism' && fortuneChoices?.lens === 'the coins' && (
+          <>
+            <div className="font-mono text-sm leading-relaxed text-neutral-700 mb-6 whitespace-pre">
+{`  ═══════    ═══ ═══
+  ═══ ═══    ═══════
+  ═══════    ═══ ═══`}
+            </div>
+            <h2 className="text-2xl font-serif text-neutral-950 mb-2">The Coins</h2>
+            <p className="text-sm text-neutral-600">I Ching</p>
+          </>
+        )}
+
+        {method === 'oracle' && fortuneChoices?.lens === 'the poets' && (
+          <>
+            <div className="font-mono text-sm leading-relaxed text-neutral-700 mb-6 whitespace-pre">
+{`   ___
+  |___|
+  | | |
+  | | |
+   \\|/
+    V`}
+            </div>
+            <h2 className="text-2xl font-serif text-neutral-950 mb-2">The Poets</h2>
+            <p className="text-sm text-neutral-600">Literary Oracle</p>
+          </>
+        )}
+
+        {method === 'surrealism' && fortuneChoices?.lens === 'the dream' && (
+          <>
+            <div className="font-mono text-sm leading-relaxed text-neutral-700 mb-6 whitespace-pre">
+{`     ______
+    /  12  \\
+   |    •   |
+   | 9    3 |~
+   |    6   |~~
+    \\______/~~~
+       ||~~~~
+      ~~~`}
+            </div>
+            <h2 className="text-2xl font-serif text-neutral-950 mb-2">The Dream</h2>
+            <p className="text-sm text-neutral-600">Surrealism</p>
+          </>
+        )}
+        {/* Tarot Card Display */}
+        {tarotCard && method === 'tarot' && (
+          <>
+            <div className="relative w-40 h-72 mb-8 rounded-lg shadow-md bg-white flex items-center justify-center">
+              <Image
+                src={`/tarot-cards/${tarotCard.img}`}
+                alt={tarotCard.name}
+                width={160}
+                height={280}
+                className="object-contain"
+                priority
+              />
+            </div>
+            <h2 className="text-2xl font-serif text-neutral-950 mb-2">{tarotCard.name}</h2>
+            <p className="text-sm text-neutral-600">{tarotCard.arcana}</p>
+          </>
+        )}
+
+        {/* Numerology Number Display */}
+        {numerologyNumber && method === 'numerology' && (
+          <>
+            <div className="font-mono text-xs leading-relaxed text-neutral-700 mb-6 whitespace-pre">
+{`    *  ┌────┬────┬────┐
+       │ 1  │ 2  │ 3  │
+       ├────┼────┼────┤  *
+       │ 4  │ 5  │ 6  │
+    *  ├────┼────┼────┤
+       │ 7  │ 8  │ 9  │
+       ├────┼────┼────┤
+       │ 11 │ 22 │ 33 │
+       └────┴────┴────┘  *`}
+            </div>
+            <h2 className="text-2xl font-serif text-neutral-950 mb-2">{numerologyNumber.keyword}</h2>
+            <p className="text-sm text-neutral-600 max-w-sm text-center">{numerologyNumber.meaning}</p>
+          </>
+        )}
+
+        {/* Runes Display */}
+        {runeData && method === 'runes' && (
+          <>
+            <div className="text-9xl font-bold font-serif text-neutral-950 mb-4 leading-none">
+              {runeData.symbol}
+            </div>
+            <h2 className="text-2xl font-serif text-neutral-950 mb-2">{runeData.name}</h2>
+            <p className="text-sm text-neutral-600 italic">{runeData.keyword}</p>
+          </>
+        )}
       </div>
 
-      {/* Selection Summary */}
+      {/* 4. Fortune Reading - displays the synthesized reading (moved before corpse) */}
+      <div className="card p-12 mb-12 animate-scale-in" style={{animationDelay: '0.3s'}}>
+        <div className="text-xl leading-8 text-neutral-800 font-serif text-center italic space-y-4">
+          {fortune.split(/(?<=[.!?])\s+/).map((sentence, index) => (
+            <p key={index} className="animate-fade-in" style={{animationDelay: `${0.4 + index * 0.05}s`}}>
+              {sentence.trim()}
+            </p>
+          ))}
+        </div>
+      </div>
+
+      {/* 5. ASCII Corpse Display (moved after fortune) */}
+      {fortuneChoices?.corpse && (
+        <div className="card p-8 mb-12 flex flex-col items-center animate-scale-in" style={{animationDelay: '0.4s'}}>
+          <div className="font-mono text-sm leading-snug text-neutral-700 whitespace-pre overflow-x-auto">
+            {fortuneChoices.corpse}
+          </div>
+        </div>
+      )}
+
+      {/* 6. "YOUR JOURNEY" Section with table format */}
       {fortuneChoices && (
-        <div className="bg-neutral-50 rounded-lg p-6">
-          <h4 className="text-sm font-semibold text-neutral-900 mb-4">Your Reading</h4>
-          <div className="grid grid-cols-1 gap-2 text-sm text-neutral-600">
-            {method && (
-              <div className="flex justify-between">
-                <span>Divination Method</span>
-                <span className="font-medium text-neutral-900 capitalize">{method}</span>
+        <div className="mb-12 animate-slide-in-up" style={{animationDelay: '0.5s'}}>
+          <h3 className="text-sm font-semibold text-neutral-600 uppercase tracking-wide mb-6 text-center">Your Journey</h3>
+          <div className="card overflow-hidden">
+            <div className="divide-y divide-neutral-200">
+              <div className="flex">
+                <div className="w-1/3 px-4 py-3 bg-neutral-50 border-r border-neutral-200">
+                  <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Persona</p>
+                </div>
+                <div className="w-2/3 px-4 py-3">
+                  <p className="text-sm text-neutral-950 capitalize">{fortuneChoices.character}</p>
+                </div>
               </div>
-            )}
-            <div className="flex justify-between">
-              <span>Character (Head)</span>
-              <span className="font-medium text-neutral-900">{fortuneChoices.character}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Timeframe (Torso)</span>
-              <span className="font-medium text-neutral-900">{fortuneChoices.timeframe}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Energy (Legs)</span>
-              <span className="font-medium text-neutral-900">{fortuneChoices.energy}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Lens (Feet)</span>
-              <span className="font-medium text-neutral-900">{fortuneChoices.lens}</span>
+              <div className="flex">
+                <div className="w-1/3 px-4 py-3 bg-neutral-50 border-r border-neutral-200">
+                  <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Timeline</p>
+                </div>
+                <div className="w-2/3 px-4 py-3">
+                  <p className="text-sm text-neutral-950 capitalize">{fortuneChoices.timeframe}</p>
+                </div>
+              </div>
+              <div className="flex">
+                <div className="w-1/3 px-4 py-3 bg-neutral-50 border-r border-neutral-200">
+                  <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Energy</p>
+                </div>
+                <div className="w-2/3 px-4 py-3">
+                  <p className="text-sm text-neutral-950 capitalize">{fortuneChoices.energy}</p>
+                </div>
+              </div>
+              <div className="flex">
+                <div className="w-1/3 px-4 py-3 bg-neutral-50 border-r border-neutral-200">
+                  <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Oracle</p>
+                </div>
+                <div className="w-2/3 px-4 py-3">
+                  <p className="text-sm text-neutral-950 capitalize">
+                    {getOracleDisplayName(fortuneChoices.lens)}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Actions */}
-      <div className="flex gap-3 mt-8 justify-center flex-wrap">
-        <button className="btn btn-secondary">Save Fortune</button>
+      {/* 8. Action Buttons */}
+      <div className="flex gap-3 justify-center flex-wrap mb-8">
         <button className="btn btn-secondary">Share</button>
         {onReset && (
           <button onClick={onReset} className="btn btn-secondary">

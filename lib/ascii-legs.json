@@ -1,0 +1,31 @@
+{
+  "legs": {
+    "bold and direct": "   ~~~\n  /|█|\\\n / █ \\",
+    "gentle and flowing": "  \\~~~/ \n   |◇| \n  / ◇ \\",
+    "steady and grounded": "   ◆◆◆\n  /█ █\\\n ▼ █ ▼",
+    "cautious and observant": "   ~~~\n  /█◇█\\\n / | \\",
+    "restless and searching": "   ◐◐◐\n  /█▲█\\\n / ▲ \\",
+    "calm and cool": "   ~~~\n  /███\\\n / █ \\",
+    "warm and open": "  ◆~~~◆\n  /█◇█\\\n / ◇ \\",
+    "sharp and focused": "   △△△\n  /█▲█\\\n ▲ █ ▲",
+    "slow and deliberate": "   ◊◊◊\n  /█ █\\\n / | \\",
+    "wild and untamed": "   ◐◑◐\n  /█▼█\\\n ▼ ▼ ▼",
+    "bright and rising": "  ☀~~~☀\n  /█★█\\\n ★ █ ★",
+    "quiet and holding": "   ~~~\n  /███\\\n / | \\",
+    "curious and seeking": "   ???\n  /█◇█\\\n ? █ ?",
+    "shadowed and inward": "   ███\n  /█ █\\\n ▼ █ ▼",
+    "playful and unpredictable": "   ◇◇◇\n  /█◇█\\\n ◇ ◯ ◇",
+    "disciplined and unwavering": "   ◆◆◆\n  /█ █\\\n █ █ █",
+    "patient and enduring": "   ~~~\n  /█ █\\\n ◆ █ ◆",
+    "impulsive and fierce": "   ▲▼▲\n  /█▼█\\\n ▼ ▼ ▼",
+    "thoughtful and analytical": "   ◉◉◉\n  /█ █\\\n | █ |",
+    "dreamy and wandering": "   ◐◐◐\n  /█◇█\\\n ~ ◇ ~",
+    "resilient and steady": "   ▼▼▼\n  /█ █\\\n █ █ █",
+    "intuitive and receptive": "   ✦✦✦\n  /█◆█\\\n ◆ █ ◆",
+    "drifting and unanchored": "   ~~~\n  /█~█\\\n ~ █ ~",
+    "ancient and remembering": "   ~~~\n  /█●█\\\n ◆ █ ◆",
+    "awakening and expanding": "   ◊◊◊\n  /█★█\\\n ★ █ ★",
+    "turbulent and transforming": "   ▲▼▲\n  /█●█\\\n ◆ █ ◆",
+    "luminous and unfolding": "  ☀~~~☀\n  /█◇█\\\n ◇ █ ◇"
+  }
+}
