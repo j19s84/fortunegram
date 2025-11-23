@@ -250,7 +250,7 @@ export default function FortuneDisplay({ fortuneChoices, method, tarotCard: init
           </>
         )}
 
-        {method === 'dadaism' && fortuneChoices?.lens === 'the coins' && (
+        {method === 'surrealism' && fortuneChoices?.lens === 'the coins' && (
           <>
             <div className="font-mono text-sm leading-relaxed text-neutral-700 mb-6 whitespace-pre">
 {`  ═══════    ═══ ═══
