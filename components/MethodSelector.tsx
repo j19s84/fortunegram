@@ -1,6 +1,6 @@
 'use client'
 
-export type DivinationMethod = 'tarot' | 'oracle' | 'numerology' | 'astrology' | 'runes' | 'dadaism'
+export type DivinationMethod = 'tarot' | 'oracle' | 'numerology' | 'astrology' | 'runes' | 'surrealism'
 
 interface MethodSelectorProps {
   onSelectMethod: (method: DivinationMethod) => void
@@ -12,7 +12,7 @@ const METHODS: Array<{ id: DivinationMethod; label: string; description: string 
   { id: 'numerology', label: 'Numerology', description: 'Numbers speak' },
   { id: 'astrology', label: 'Astrology', description: 'Stars align' },
   { id: 'runes', label: 'Runes', description: 'Sacred stones' },
-  { id: 'dadaism', label: 'Dada (Cut-Up)', description: 'Chance chaos' },
+  { id: 'surrealism', label: 'The Dream (Surrealism)', description: 'Dreamlike visions' },
 ]
 
 export default function MethodSelector({ onSelectMethod }: MethodSelectorProps) {
