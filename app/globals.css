@@ -21,6 +21,9 @@ body {
   position: relative;
   overflow-x: hidden;
   background: #ffffff;
+  transform: scale(0.75);
+  transform-origin: top center;
+  margin-bottom: -6.25vh;
 }
 
 /* Animated gradient blob background */
