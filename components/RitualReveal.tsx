@@ -191,7 +191,7 @@ export default function RitualReveal({ method, onComplete }: RitualRevealProps) 
       {method === 'numerology' && <NumerologyReveal onComplete={onComplete} />}
       {method === 'astrology' && <AstrologyReveal onComplete={onComplete} />}
       {method === 'runes' && <RunesReveal onComplete={onComplete} />}
-      {method === 'dadaism' && <DadaismReveal onComplete={onComplete} />}
+      {method === 'surrealism' && <DadaismReveal onComplete={onComplete} />}
     </div>
   )
 }

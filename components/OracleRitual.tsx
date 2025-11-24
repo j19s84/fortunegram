@@ -16,15 +16,15 @@ const ORACLE_TO_METHOD: Record<string, DivinationMethod> = {
   'the stones': 'runes',
   'the stars': 'astrology',
   'the numbers': 'numerology',
-  'the cut-up': 'dadaism',
+  'the dream': 'surrealism',
   'the bones': 'runes',
   'the tea leaves': 'oracle',
   'the mirror': 'oracle',
   'the smoke': 'oracle',
-  'the coins': 'dadaism', // I Ching - maps to dadaism for display
+  'the coins': 'oracle',
   'the water': 'oracle',
   'the ink': 'oracle',
-  'the poets': 'oracle', // Literary Oracle - maps to oracle for display
+  'the poets': 'oracle',
 }
 
 export default function OracleRitual({ oracle, onComplete }: OracleRitualProps) {
