@@ -30,7 +30,8 @@
       "Bash(for port in 3000 3001)",
       "Bash(do echo \"=== Port $port ===\")",
       "Bash(killall:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(gh repo view:*)"
     ],
     "deny": [],
     "ask": []

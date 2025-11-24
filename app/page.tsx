@@ -47,7 +47,7 @@ export default function Home() {
       'the tea leaves': 'oracle',
       'the mirror': 'oracle',
       'the smoke': 'oracle',
-      'the coins': 'surrealism',
+      'the coins': 'oracle',
       'the water': 'oracle',
       'the ink': 'oracle',
       'the poets': 'oracle',
