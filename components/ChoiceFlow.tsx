@@ -220,13 +220,13 @@ export default function ChoiceFlow({ fortuneType, onComplete }: ChoiceFlowProps)
       </div>
 
       {/* Question */}
-      <div className="mb-8">
-        <h3 className="text-2xl font-semibold text-neutral-900 mb-2">{question.title}</h3>
-        <p className="text-neutral-600">{question.description}</p>
+      <div className="mb-6 sm:mb-8 px-2">
+        <h3 className="text-xl sm:text-2xl font-semibold text-neutral-900 mb-2">{question.title}</h3>
+        <p className="text-sm sm:text-base text-neutral-600">{question.description}</p>
       </div>
 
       {/* Choices - Tarot Spread Layout */}
-      <div className="flex justify-center items-end gap-6 perspective mb-8">
+      <div className="flex flex-col sm:flex-row justify-center items-center sm:items-end gap-3 sm:gap-4 md:gap-6 perspective mb-8 px-2">
         {question.choices.map((choice, index) => {
           const positions = [
             'rotate-y-12 -translate-x-2',
@@ -239,7 +239,7 @@ export default function ChoiceFlow({ fortuneType, onComplete }: ChoiceFlowProps)
             <button
               key={choice.id}
               onClick={() => handleChoice(choice.id)}
-              className="group relative flex-1 max-w-[140px] h-[200px] bg-neutral-0 border-2 border-neutral-300 rounded-lg p-4 flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-105 hover:border-purple-500 hover:-translate-y-2 hover:shadow-lg active:scale-95"
+              className="group relative flex-1 w-full sm:flex-1 min-h-[140px] sm:min-h-[160px] md:min-h-[200px] bg-neutral-0 border-2 border-neutral-300 rounded-lg p-3 sm:p-4 flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-105 hover:border-purple-500 hover:-translate-y-2 hover:shadow-lg active:scale-95"
               style={{
                 transform: `perspective(1000px) rotateY(${offset}deg) ${
                   index === 1 ? 'scale(1.05)' : ''
@@ -247,16 +247,16 @@ export default function ChoiceFlow({ fortuneType, onComplete }: ChoiceFlowProps)
               }}
             >
               {/* Card content */}
-              <div className="flex flex-col items-center gap-2 h-full justify-center">
+              <div className="flex flex-col items-center gap-1 sm:gap-2 h-full justify-center">
                 {/* Simple icon based on index */}
-                <div className="text-2xl">
+                <div className="text-lg sm:text-2xl">
                   {index === 0 && '✧'}
                   {index === 1 && '◆'}
                   {index === 2 && '✧'}
                 </div>
 
                 {/* Choice text */}
-                <p className="text-sm font-medium text-neutral-900 leading-tight group-hover:text-purple-600 transition-colors">
+                <p className="text-xs sm:text-sm font-medium text-neutral-900 leading-tight group-hover:text-purple-600 transition-colors">
                   {choice.text}
                 </p>
 

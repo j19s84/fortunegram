@@ -31,7 +31,8 @@
       "Bash(do echo \"=== Port $port ===\")",
       "Bash(killall:*)",
       "Bash(git pull:*)",
-      "Bash(gh repo view:*)"
+      "Bash(gh repo view:*)",
+      "Bash(node test-fortune-generation.js:*)"
     ],
     "deny": [],
     "ask": []

@@ -219,11 +219,11 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
     <div className="w-full">
       {/* BEFORE STARTING: Full-screen question at top */}
       {!hasStarted && currentSection === 'character' && (
-        <div className="animate-fade-in flex flex-col items-center justify-start min-h-screen pt-24">
-          <h3 className="text-center text-4xl font-serif text-neutral-950 mb-16">
+        <div className="animate-fade-in flex flex-col items-center justify-start min-h-screen pt-16 sm:pt-24 px-4">
+          <h3 className="text-center text-2xl sm:text-3xl md:text-4xl font-serif text-white mb-8 sm:mb-12 md:mb-16 drop-shadow-lg">
             Who seeks wisdom today?
           </h3>
-          <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-8 w-full max-w-2xl">
             {characterOptions.map((char, idx) => (
               <button
                 key={char}
@@ -235,7 +235,7 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
               </button>
             ))}
           </div>
-          <p className="text-center text-sm text-neutral-500">
+          <p className="text-center text-sm text-gray-200 drop-shadow">
             Choose a persona that is resonating with your mindset today.
           </p>
         </div>
@@ -243,20 +243,20 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
 
       {/* AFTER STARTING: Card-based corpse builder at center */}
       {hasStarted && (
-        <div className="animate-fade-in flex flex-col items-center pt-12 min-h-screen">
-          {/* Card container for corpse */}
-          <div className="card p-8 w-full max-w-md">
+        <div className="animate-fade-in flex flex-col items-center pt-8 sm:pt-12 min-h-screen px-4">
+          {/* Card container for corpse - Glassmorphic */}
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-lg p-4 sm:p-6 md:p-8 w-full max-w-md shadow-2xl">
             {/* Character heading */}
             {steps.character && (
-              <h3 className="text-center text-2xl font-serif text-neutral-950 mb-6">
+              <h3 className="text-center text-lg sm:text-xl md:text-2xl font-serif text-white mb-4 sm:mb-6">
                 {capitalize(steps.character)}
               </h3>
             )}
 
             {/* Progressive Corpse Display - accumulated + new part animating */}
             {accumulatedCorpse && (
-              <div className="flex justify-center mb-8 min-h-32">
-                <div className="font-mono text-sm leading-snug whitespace-pre text-neutral-700">
+              <div className="flex justify-center mb-6 sm:mb-8 min-h-32">
+                <div className="font-mono text-xs sm:text-sm leading-snug whitespace-pre text-gray-100">
                   {/* Show accumulated corpse (static) */}
                   {accumulatedCorpse.replace(newPart, '')}
                   {/* Show new part with typewriter animation if animating */}
@@ -275,21 +275,21 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
             )}
 
             {/* Questions and buttons below corpse */}
-            <div className="border-t border-neutral-200 pt-6 mt-6 min-h-48">
+            <div className="border-t border-white/20 pt-6 mt-6 min-h-48">
               {/* Choice Confirmation (brief message during transition) */}
               {choiceConfirmation && (
-                <div className="text-center mb-4 text-neutral-600 text-sm italic">
+                <div className="text-center mb-4 text-gray-200 text-sm italic">
                   {choiceConfirmation}
                 </div>
               )}
 
               {/* Section 2: Timeframe */}
               {currentSection === 'timeframe' && (
-                <div className={`transition-opacity duration-500 ${showQuestion ? 'opacity-100' : 'opacity-0'} space-y-4`}>
-                  <h4 className="text-center text-lg font-serif text-neutral-950 mb-4">
+                <div className={`transition-opacity duration-500 ${showQuestion ? 'opacity-100' : 'opacity-0'} space-y-3`}>
+                  <h4 className="text-center text-sm sm:text-base md:text-lg font-serif text-white mb-3">
                     What timeline calls to you?
                   </h4>
-                  <p className="text-center text-sm text-neutral-500">
+                  <p className="text-center text-xs sm:text-sm text-gray-200">
                     Choose a timeframe you want guidance on.
                   </p>
                   <div className="flex gap-2 flex-col mb-6">
@@ -297,7 +297,7 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                       <button
                         key={timeline}
                         onClick={() => handleTimeframeSelect(timeline)}
-                        className="px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-center text-sm font-semibold text-neutral-950 capitalize"
+                        className="px-4 py-3 border border-white/20 rounded-lg hover:bg-white/15 transition-colors text-center text-sm font-semibold text-white capitalize"
                       >
                         {timeline}
                       </button>
@@ -309,10 +309,10 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
               {/* Section 3: Energy */}
               {currentSection === 'energy' && (
                 <div className={`transition-opacity duration-500 ${showQuestion ? 'opacity-100' : 'opacity-0'} space-y-4`}>
-                  <h4 className="text-center text-lg font-serif text-neutral-950 mb-4">
+                  <h4 className="text-center text-lg font-serif text-white mb-4">
                     What energy guides you?
                   </h4>
-                  <p className="text-center text-sm text-neutral-500">
+                  <p className="text-center text-sm text-gray-200">
                     Choose an energy that is grounding you today.
                   </p>
                   <div className="flex gap-2 flex-col mb-6">
@@ -320,7 +320,7 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                       <button
                         key={energy}
                         onClick={() => handleEnergySelect(energy)}
-                        className="px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-center text-sm font-semibold text-neutral-950 capitalize"
+                        className="px-4 py-3 border border-white/20 rounded-lg hover:bg-white/15 transition-colors text-center text-sm font-semibold text-white capitalize"
                       >
                         {energy}
                       </button>
@@ -332,10 +332,10 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
               {/* Section 4: Oracle/Lens */}
               {currentSection === 'lens' && (
                 <div className={`transition-opacity duration-500 ${showQuestion ? 'opacity-100' : 'opacity-0'} space-y-4`}>
-                  <h4 className="text-center text-lg font-serif text-neutral-950 mb-4">
+                  <h4 className="text-center text-lg font-serif text-white mb-4">
                     What oracle speaks today?
                   </h4>
-                  <p className="text-center text-sm text-neutral-500">
+                  <p className="text-center text-sm text-gray-200">
                     Choose the voice that will deliver your message.
                   </p>
                   <div className="flex gap-2 flex-col mb-6">
@@ -343,10 +343,10 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
                       <button
                         key={oracle.name}
                         onClick={() => handleLensSelect(oracle.name)}
-                        className="px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-center"
+                        className="px-4 py-3 border border-white/20 rounded-lg hover:bg-white/15 transition-colors text-center"
                       >
-                        <p className="text-sm font-semibold text-neutral-950 capitalize">{oracle.name}</p>
-                        <p className="text-xs text-neutral-600 opacity-60">{oracle.subtitle}</p>
+                        <p className="text-sm font-semibold text-white capitalize">{oracle.name}</p>
+                        <p className="text-xs text-gray-300 opacity-80">{oracle.subtitle}</p>
                       </button>
                     ))}
                   </div>
@@ -356,8 +356,8 @@ export default function CorpseBuilder({ onComplete }: CorpseBuilderProps) {
               {/* Complete State - Auto-advances to fortune after 1.5 seconds */}
               {currentSection === 'complete' && (
                 <div className="animate-fade-in text-center space-y-6">
-                  <p className="text-neutral-600 text-sm">Your daily exquisite corpse is complete</p>
-                  <p className="text-neutral-500 text-xs italic">Revealing your fortune...</p>
+                  <p className="text-gray-200 text-sm">Your daily exquisite corpse is complete</p>
+                  <p className="text-gray-300 text-xs italic">Revealing your fortune...</p>
                 </div>
               )}
             </div>

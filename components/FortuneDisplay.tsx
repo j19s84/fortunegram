@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import type { CorpseChoices } from './CorpseBuilder'
 import type { DivinationMethod } from './MethodSelector'
+import FortuneCard from './FortuneCard'
 import { getTarotCards, getRandomTarotCard, getCardWisdom } from '@/lib/tarot'
 import type { TarotCardWithImages } from '@/lib/tarot'
 import { selectNumber } from '@/lib/numerology'
@@ -60,6 +61,8 @@ export default function FortuneDisplay({ fortuneChoices, method, tarotCard: init
   const [tarotCard, setTarotCard] = useState<TarotCardWithImages | null>(initialCard || null)
   const [numerologyNumber, setNumerologyNumber] = useState<NumerologyNumber | null>(null)
   const [runeData, setRuneData] = useState<RuneData | null>(null)
+  const [showCard, setShowCard] = useState(false)
+  const [isExportingCard, setIsExportingCard] = useState(false)
 
   useEffect(() => {
     // Generate fortune based on corpse choices and divination method
@@ -221,50 +224,50 @@ export default function FortuneDisplay({ fortuneChoices, method, tarotCard: init
     <div className={`w-full max-w-2xl mx-auto px-4 py-12 relative z-10 ${isRevealing ? 'animate-fade-in' : ''}`}>
       {/* 1. Page Header */}
       <div className="text-center mb-12 animate-slide-in-up">
-        <h1 className="text-5xl md:text-6xl font-serif font-bold text-neutral-950 mb-2 tracking-tight">Fortunegram</h1>
-        <p className="text-neutral-600 font-serif italic">Daily directions from the beyond.</p>
+        <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-2 tracking-tight drop-shadow-lg">Fortunegram</h1>
+        <p className="text-gray-200 font-serif italic drop-shadow">Daily directions from the beyond.</p>
       </div>
 
       {/* 2. "YOUR READING" Label */}
       <div className="text-center mb-10 animate-scale-in" style={{animationDelay: '0.1s'}}>
-        <div className="inline-block px-4 py-2 card backdrop-blur-lg">
-          <span className="text-xs font-semibold text-neutral-600 uppercase tracking-wide">
+        <div className="inline-block px-4 py-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-lg">
+          <span className="text-xs font-semibold text-gray-200 uppercase tracking-wide">
             Your Reading
           </span>
         </div>
       </div>
 
       {/* 3. Oracle Card - displays the divination object (tarot, rune, number, etc) */}
-      <div className="card p-12 mb-12 flex flex-col items-center animate-scale-in" style={{animationDelay: '0.2s'}}>
+      <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-lg p-12 mb-12 flex flex-col items-center animate-scale-in shadow-2xl" style={{animationDelay: '0.2s'}}>
         {/* AI Oracle Card Display */}
         {method === 'astrology' && fortuneChoices?.lens === 'the stars' && (
           <>
-            <div className="font-mono text-sm leading-relaxed text-neutral-700 mb-6 whitespace-pre">
+            <div className="font-mono text-sm leading-relaxed text-gray-200 mb-6 whitespace-pre">
 {`   *  .-.  *
   .  (   )
     . \`~' .
   *     *`}
             </div>
-            <h2 className="text-2xl font-serif text-neutral-950 mb-2">The Stars</h2>
-            <p className="text-sm text-neutral-600">Astrology</p>
+            <h2 className="text-2xl font-serif text-white mb-2">The Stars</h2>
+            <p className="text-sm text-gray-300">Astrology</p>
           </>
         )}
 
         {method === 'oracle' && fortuneChoices?.lens === 'the coins' && (
           <>
-            <div className="font-mono text-sm leading-relaxed text-neutral-700 mb-6 whitespace-pre">
+            <div className="font-mono text-sm leading-relaxed text-gray-200 mb-6 whitespace-pre">
 {`  ═══════    ═══ ═══
   ═══ ═══    ═══════
   ═══════    ═══ ═══`}
             </div>
-            <h2 className="text-2xl font-serif text-neutral-950 mb-2">The Coins</h2>
-            <p className="text-sm text-neutral-600">I Ching</p>
+            <h2 className="text-2xl font-serif text-white mb-2">The Coins</h2>
+            <p className="text-sm text-gray-300">I Ching</p>
           </>
         )}
 
         {method === 'oracle' && fortuneChoices?.lens === 'the poets' && (
           <>
-            <div className="font-mono text-sm leading-relaxed text-neutral-700 mb-6 whitespace-pre">
+            <div className="font-mono text-sm leading-relaxed text-gray-200 mb-6 whitespace-pre">
 {`   ___
   |___|
   | | |
@@ -272,14 +275,14 @@ export default function FortuneDisplay({ fortuneChoices, method, tarotCard: init
    \\|/
     V`}
             </div>
-            <h2 className="text-2xl font-serif text-neutral-950 mb-2">The Poets</h2>
-            <p className="text-sm text-neutral-600">Literary Oracle</p>
+            <h2 className="text-2xl font-serif text-white mb-2">The Poets</h2>
+            <p className="text-sm text-gray-300">Literary Oracle</p>
           </>
         )}
 
         {method === 'surrealism' && fortuneChoices?.lens === 'the dream' && (
           <>
-            <div className="font-mono text-sm leading-relaxed text-neutral-700 mb-6 whitespace-pre">
+            <div className="font-mono text-sm leading-relaxed text-gray-200 mb-6 whitespace-pre">
 {`     ______
     /  12  \\
    |    •   |
@@ -289,8 +292,8 @@ export default function FortuneDisplay({ fortuneChoices, method, tarotCard: init
        ||~~~~
       ~~~`}
             </div>
-            <h2 className="text-2xl font-serif text-neutral-950 mb-2">The Dream</h2>
-            <p className="text-sm text-neutral-600">Surrealism</p>
+            <h2 className="text-2xl font-serif text-white mb-2">The Dream</h2>
+            <p className="text-sm text-gray-300">Surrealism</p>
           </>
         )}
         {/* Tarot Card Display */}
@@ -306,15 +309,15 @@ export default function FortuneDisplay({ fortuneChoices, method, tarotCard: init
                 priority
               />
             </div>
-            <h2 className="text-2xl font-serif text-neutral-950 mb-2">{tarotCard.name}</h2>
-            <p className="text-sm text-neutral-600">{tarotCard.arcana}</p>
+            <h2 className="text-2xl font-serif text-white mb-2">{tarotCard.name}</h2>
+            <p className="text-sm text-gray-300">{tarotCard.arcana}</p>
           </>
         )}
 
         {/* Numerology Number Display */}
         {numerologyNumber && method === 'numerology' && (
           <>
-            <div className="font-mono text-xs leading-relaxed text-neutral-700 mb-6 whitespace-pre">
+            <div className="font-mono text-xs leading-relaxed text-gray-200 mb-6 whitespace-pre">
 {`    *  ┌────┬────┬────┐
        │ 1  │ 2  │ 3  │
        ├────┼────┼────┤  *
@@ -325,26 +328,26 @@ export default function FortuneDisplay({ fortuneChoices, method, tarotCard: init
        │ 11 │ 22 │ 33 │
        └────┴────┴────┘  *`}
             </div>
-            <h2 className="text-2xl font-serif text-neutral-950 mb-2">{numerologyNumber.keyword}</h2>
-            <p className="text-sm text-neutral-600 max-w-sm text-center">{numerologyNumber.meaning}</p>
+            <h2 className="text-2xl font-serif text-white mb-2">{numerologyNumber.keyword}</h2>
+            <p className="text-sm text-gray-300 max-w-sm text-center">{numerologyNumber.meaning}</p>
           </>
         )}
 
         {/* Runes Display */}
         {runeData && method === 'runes' && (
           <>
-            <div className="text-9xl font-bold font-serif text-neutral-950 mb-4 leading-none">
+            <div className="text-9xl font-bold font-serif text-white mb-4 leading-none">
               {runeData.symbol}
             </div>
-            <h2 className="text-2xl font-serif text-neutral-950 mb-2">{runeData.name}</h2>
-            <p className="text-sm text-neutral-600 italic">{runeData.keyword}</p>
+            <h2 className="text-2xl font-serif text-white mb-2">{runeData.name}</h2>
+            <p className="text-sm text-gray-300 italic">{runeData.keyword}</p>
           </>
         )}
       </div>
 
       {/* 4. Fortune Reading - displays the synthesized reading (moved before corpse) */}
-      <div className="card p-12 mb-12 animate-scale-in" style={{animationDelay: '0.3s'}}>
-        <div className="text-xl leading-8 text-neutral-800 font-serif text-center italic space-y-4">
+      <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-lg p-12 mb-12 animate-scale-in shadow-2xl" style={{animationDelay: '0.3s'}}>
+        <div className="text-xl leading-8 text-white font-serif text-center italic space-y-4">
           {fortune.split(/(?<=[.!?])\s+/).map((sentence, index) => (
             <p key={index} className="animate-fade-in" style={{animationDelay: `${0.4 + index * 0.05}s`}}>
               {sentence.trim()}
@@ -355,8 +358,8 @@ export default function FortuneDisplay({ fortuneChoices, method, tarotCard: init
 
       {/* 5. ASCII Corpse Display (moved after fortune) */}
       {fortuneChoices?.corpse && (
-        <div className="card p-8 mb-12 flex flex-col items-center animate-scale-in" style={{animationDelay: '0.4s'}}>
-          <div className="font-mono text-sm leading-snug text-neutral-700 whitespace-pre overflow-x-auto">
+        <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-lg p-8 mb-12 flex flex-col items-center animate-scale-in shadow-2xl" style={{animationDelay: '0.4s'}}>
+          <div className="font-mono text-sm leading-snug text-gray-200 whitespace-pre overflow-x-auto">
             {fortuneChoices.corpse}
           </div>
         </div>
@@ -365,39 +368,39 @@ export default function FortuneDisplay({ fortuneChoices, method, tarotCard: init
       {/* 6. "YOUR JOURNEY" Section with table format */}
       {fortuneChoices && (
         <div className="mb-12 animate-slide-in-up" style={{animationDelay: '0.5s'}}>
-          <h3 className="text-sm font-semibold text-neutral-600 uppercase tracking-wide mb-6 text-center">Your Journey</h3>
-          <div className="card overflow-hidden">
-            <div className="divide-y divide-neutral-200">
+          <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-6 text-center">Your Journey</h3>
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-lg overflow-hidden shadow-2xl">
+            <div className="divide-y divide-white/20">
               <div className="flex">
-                <div className="w-1/3 px-4 py-3 bg-neutral-50 border-r border-neutral-200">
-                  <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Persona</p>
+                <div className="w-1/3 px-4 py-3 bg-white/5 border-r border-white/20">
+                  <p className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Persona</p>
                 </div>
                 <div className="w-2/3 px-4 py-3">
-                  <p className="text-sm text-neutral-950 capitalize">{fortuneChoices.character}</p>
+                  <p className="text-sm text-white capitalize">{fortuneChoices.character}</p>
                 </div>
               </div>
               <div className="flex">
-                <div className="w-1/3 px-4 py-3 bg-neutral-50 border-r border-neutral-200">
-                  <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Timeline</p>
+                <div className="w-1/3 px-4 py-3 bg-white/5 border-r border-white/20">
+                  <p className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Timeline</p>
                 </div>
                 <div className="w-2/3 px-4 py-3">
-                  <p className="text-sm text-neutral-950 capitalize">{fortuneChoices.timeframe}</p>
+                  <p className="text-sm text-white capitalize">{fortuneChoices.timeframe}</p>
                 </div>
               </div>
               <div className="flex">
-                <div className="w-1/3 px-4 py-3 bg-neutral-50 border-r border-neutral-200">
-                  <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Energy</p>
+                <div className="w-1/3 px-4 py-3 bg-white/5 border-r border-white/20">
+                  <p className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Energy</p>
                 </div>
                 <div className="w-2/3 px-4 py-3">
-                  <p className="text-sm text-neutral-950 capitalize">{fortuneChoices.energy}</p>
+                  <p className="text-sm text-white capitalize">{fortuneChoices.energy}</p>
                 </div>
               </div>
               <div className="flex">
-                <div className="w-1/3 px-4 py-3 bg-neutral-50 border-r border-neutral-200">
-                  <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Oracle</p>
+                <div className="w-1/3 px-4 py-3 bg-white/5 border-r border-white/20">
+                  <p className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Oracle</p>
                 </div>
                 <div className="w-2/3 px-4 py-3">
-                  <p className="text-sm text-neutral-950 capitalize">
+                  <p className="text-sm text-white capitalize">
                     {getOracleDisplayName(fortuneChoices.lens)}
                   </p>
                 </div>
@@ -409,13 +412,45 @@ export default function FortuneDisplay({ fortuneChoices, method, tarotCard: init
 
       {/* 8. Action Buttons */}
       <div className="flex gap-3 justify-center flex-wrap mb-8">
-        <button className="btn btn-secondary">Share</button>
+        <button onClick={() => setShowCard(true)} className="btn btn-secondary">
+          Share Card
+        </button>
         {onReset && (
           <button onClick={onReset} className="btn btn-secondary">
             New Reading
           </button>
         )}
       </div>
+
+      {/* 9. Shareable Card Modal */}
+      {showCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl max-w-sm w-full max-h-screen overflow-y-auto shadow-2xl">
+            <div className="sticky top-0 bg-gradient-to-r from-neutral-50 to-neutral-100 border-b border-neutral-200 px-6 py-4 flex justify-between items-center rounded-t-2xl">
+              <h2 className="text-lg font-serif font-bold text-neutral-950">Your Fortune Card</h2>
+              <button
+                onClick={() => setShowCard(false)}
+                className="text-neutral-400 hover:text-neutral-600 text-2xl leading-none transition-colors"
+                aria-label="Close modal"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6 sm:p-8">
+              <FortuneCard
+                fortune={fortune}
+                corpse={fortuneChoices?.corpse}
+                choices={fortuneChoices}
+                method={method}
+                oracleName={fortuneChoices?.lens || undefined}
+                fortuneId={`fortune-${Date.now()}`}
+                isExporting={isExportingCard}
+                onDownload={() => setIsExportingCard(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

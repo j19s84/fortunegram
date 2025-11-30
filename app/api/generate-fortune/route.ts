@@ -1,9 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
+import * as fs from 'fs'
+import * as path from 'path'
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 })
+
+// Load poets quotes library
+let poetsQuotes: Record<string, Array<{ text: string; author: string }>> | null = null
+
+function loadPoetsQuotes() {
+  if (poetsQuotes) return poetsQuotes
+  try {
+    const filePath = path.join(process.cwd(), 'lib', 'poets-quotes.json')
+    const fileContent = fs.readFileSync(filePath, 'utf-8')
+    poetsQuotes = JSON.parse(fileContent)
+    return poetsQuotes
+  } catch (error) {
+    console.error('Failed to load poets quotes:', error)
+    return null
+  }
+}
 
 // Rate limiting: Store IP -> timestamps for request tracking
 const rateLimitStore: Map<string, number[]> = new Map()
@@ -86,6 +104,119 @@ const LITERARY_QUOTES = [
   { text: "One must have chaos within oneself to give birth to a dancing star.", author: 'Kafka', themes: ['creativity', 'struggle', 'transformation'] },
 ]
 
+// Map persona/timeline/energy to quote theme from poets-quotes.json
+function getThemeFromContext(persona: string, timeline: string, energy: string): string {
+  const lowerPersona = persona.toLowerCase()
+  const lowerTimeline = timeline.toLowerCase()
+  const lowerEnergy = energy.toLowerCase()
+
+  // Theme scoring system
+  const themeScores: Record<string, number> = {
+    transformation: 0,
+    courage: 0,
+    love: 0,
+    uncertainty: 0,
+    time: 0,
+    self: 0,
+    loss: 0,
+    joy: 0,
+    beginnings: 0,
+    endings: 0,
+  }
+
+  // TRANSFORMATION: change, growth, evolution, metamorphosis
+  if (lowerEnergy.includes('transform') || lowerEnergy.includes('evolv') || lowerEnergy.includes('change')) {
+    themeScores.transformation += 3
+  }
+  if (lowerPersona.includes('seeker') || lowerPersona.includes('wanderer')) themeScores.transformation += 2
+
+  // COURAGE: challenges, new beginnings, bold timelines, overcoming
+  if (lowerEnergy.includes('bold') || lowerEnergy.includes('courageous') || lowerEnergy.includes('brave')) {
+    themeScores.courage += 3
+  }
+  if (lowerTimeline.includes('challenge') || lowerTimeline.includes('difficult')) themeScores.courage += 2
+  if (lowerEnergy.includes('afraid') || lowerEnergy.includes('fearful')) themeScores.courage += 2
+
+  // LOVE: relationship, connection, heart-centered, intimacy
+  if (lowerEnergy.includes('love') || lowerEnergy.includes('heart') || lowerEnergy.includes('connection')) {
+    themeScores.love += 3
+  }
+  if (lowerPersona.includes('lover') || lowerPersona.includes('romantic')) themeScores.love += 2
+  if (lowerEnergy.includes('yearning') || lowerEnergy.includes('longing')) themeScores.love += 2
+
+  // UNCERTAINTY: unclear paths, questioning, confusion, doubt
+  if (lowerEnergy.includes('uncertain') || lowerEnergy.includes('lost') || lowerEnergy.includes('confused')) {
+    themeScores.uncertainty += 3
+  }
+  if (lowerTimeline.includes('unknown') || lowerTimeline.includes('unclear')) themeScores.uncertainty += 2
+  if (lowerPersona.includes('seeker') || lowerPersona.includes('wanderer')) themeScores.uncertainty += 1
+
+  // TIME: patience, waiting, "the year ahead", tempo, seasons
+  if (lowerTimeline.includes('future') || lowerTimeline.includes('ahead') || lowerTimeline.includes('year')) {
+    themeScores.time += 3
+  }
+  if (lowerEnergy.includes('patient') || lowerEnergy.includes('waiting')) themeScores.time += 2
+  if (lowerTimeline.includes('time') || lowerTimeline.includes('season')) themeScores.time += 2
+
+  // SELF: identity, authenticity, self-discovery, knowing oneself
+  if (lowerEnergy.includes('authentic') || lowerEnergy.includes('true self') || lowerEnergy.includes('identity')) {
+    themeScores.self += 3
+  }
+  if (lowerPersona.includes('self') || lowerPersona.includes('authentic')) themeScores.self += 2
+  if (lowerEnergy.includes('finding') || lowerEnergy.includes('discovering')) themeScores.self += 2
+
+  // LOSS: grief, endings, letting go, absence
+  if (lowerEnergy.includes('grief') || lowerEnergy.includes('loss') || lowerEnergy.includes('mourning')) {
+    themeScores.loss += 3
+  }
+  if (lowerTimeline.includes('past') || lowerTimeline.includes('memory')) themeScores.loss += 2
+  if (lowerEnergy.includes('sad') || lowerEnergy.includes('melancholy')) themeScores.loss += 1
+
+  // JOY: celebration, abundance, lightness, delight
+  if (lowerEnergy.includes('joyful') || lowerEnergy.includes('celebrat') || lowerEnergy.includes('abundant')) {
+    themeScores.joy += 3
+  }
+  if (lowerEnergy.includes('light') || lowerEnergy.includes('delight')) themeScores.joy += 2
+  if (lowerPersona.includes('celebrat')) themeScores.joy += 2
+
+  // BEGINNINGS: fresh starts, "what's next", new chapters, initiation
+  if (lowerTimeline.includes('beginning') || lowerTimeline.includes('start') || lowerTimeline.includes('new')) {
+    themeScores.beginnings += 3
+  }
+  if (lowerEnergy.includes('hopeful') || lowerEnergy.includes('optimistic')) themeScores.beginnings += 2
+  if (lowerPersona.includes('pioneer') || lowerPersona.includes('starter')) themeScores.beginnings += 2
+
+  // ENDINGS: closure, completion, transitions, finality
+  if (lowerTimeline.includes('ending') || lowerTimeline.includes('finish') || lowerTimeline.includes('complete')) {
+    themeScores.endings += 3
+  }
+  if (lowerEnergy.includes('closure') || lowerEnergy.includes('finish')) themeScores.endings += 2
+  if (lowerPersona.includes('closer') || lowerPersona.includes('finisher')) themeScores.endings += 2
+
+  // Find highest scoring theme, with fallback
+  let selectedTheme = 'self' // Default theme
+  let maxScore = -1
+
+  for (const [theme, score] of Object.entries(themeScores)) {
+    if (score > maxScore) {
+      maxScore = score
+      selectedTheme = theme
+    }
+  }
+
+  return selectedTheme
+}
+
+// Select a random quote from a specific theme
+function selectRandomQuoteFromTheme(
+  theme: string,
+  quotes: Record<string, Array<{ text: string; author: string }>>
+): { text: string; author: string } | null {
+  const themeQuotes = quotes[theme]
+  if (!themeQuotes || themeQuotes.length === 0) return null
+  return themeQuotes[Math.floor(Math.random() * themeQuotes.length)]
+}
+
 function selectQuoteForContext(persona: string, timeline: string, energy: string): typeof LITERARY_QUOTES[0] {
   // Filter quotes by theme relevance
   const lowerPersona = persona.toLowerCase()
@@ -132,52 +263,58 @@ function selectQuoteForContext(persona: string, timeline: string, energy: string
 // Helper to get oracle prompt
 function getOraclePrompt(oracle: string, persona: string, timeline: string, energy: string): string {
   if (oracle === 'the poets') {
-    const selectedQuote = selectQuoteForContext(persona, timeline, energy)
-    return `You are a keeper of literary wisdom, weaving timeless insights into contemporary guidance.
-
-The seeker is a "${persona}" with "${energy}" energy, seeking guidance for "${timeline}".
-
-The quote you're reflecting on: "${selectedQuote.text}" — ${selectedQuote.author}
-
-In 1-2 sentences total, briefly interpret how this quote speaks to their current situation. Be direct and specific. No mysticism. Focus on the truth it reveals about their life right now.`
+    // Return a special marker for quote-based poets oracle (will be handled in POST handler)
+    return `__POETS_ORACLE__:${persona}:${timeline}:${energy}`
   }
 
   const ORACLE_PROMPTS: Record<string, string> = {
-    'the cards': `You are a reader of archetypal patterns and human psychology.
+    'the cards': `You are a reader fluent in archetypal patterns. Your job isn't to describe cards—it's to reveal what they mirror in the seeker's psyche.
 
-The seeker is a "${persona}" with "${energy}" energy, seeking guidance for "${timeline}".
+Seeker: ${persona}. Energy: ${energy}. Time focus: ${timeline}.
 
-Generate exactly 2-3 sentences separated by line breaks. Max 50 words. Reflect the psychological significance of what the cards reveal about their situation. Be grounded and specific—no "beloved," "cosmic," "sacred," "souls," "whisper," or flowery language. Sound like someone offering true perspective.`,
+Output: 2-3 sentences, line breaks between each. Max 60 words.
 
-    'the stones': `You are an interpreter of ancient rune wisdom, connecting elemental forces to practical insight.
+Write like you've seen this person's shadow before. Name the inner pattern playing out. Connect it to one concrete choice they're facing now. No flowery words, no "the universe," no mystical hedging. This is psychological truth dressed plainly.`,
 
-The seeker is a "${persona}" with "${energy}" energy, seeking guidance for "${timeline}".
+    'the stones': `You speak the language of elemental forces. You read runes as frozen wisdom about power, constraint, timing, and flow.
 
-Generate exactly 2-3 sentences separated by line breaks. Max 50 words. Ground the rune's ancient meaning in their real situation. Use primal, elemental language but stay direct. No "illuminate," "beacon," "sacred fire," or abstract mysticism.`,
+Seeker: ${persona}. Energy: ${energy}. Time focus: ${timeline}.
 
-    'the stars': `You are an astrologer observing cosmic patterns and their earthly parallels.
+Output: 2-3 sentences, line breaks between each. Max 60 words.
 
-The seeker is a "${persona}" with "${energy}" energy, seeking guidance for "${timeline}".
+Think: What would stone itself teach this person right now? Don't name specific runes—evoke their raw meaning. Use short, declarative sentences. Sound like earth speaking directly. Ground this in their actual situation, not mystical abstraction.`,
 
-Generate exactly 2-3 sentences separated by line breaks. Max 50 words. Connect planetary/celestial patterns to practical observation. Be precise and surprising. Use one astronomical reference but keep it grounded. Avoid flowery language.`,
+    'the stars': `You observe how cosmic timing and terrestrial life collide. Planets don't change people—but their movements reflect the seasons we're already in.
 
-    'the numbers': `You are a numerologist seeing patterns in rhythm and cycles.
+Seeker: ${persona}. Energy: ${energy}. Time focus: ${timeline}.
 
-The seeker is a "${persona}" with "${energy}" energy, seeking guidance for "${timeline}".
+Output: 2-3 sentences, line breaks between each. Max 60 words.
 
-Generate exactly 2-3 sentences separated by line breaks. Max 50 words. Reveal numerical patterns that illuminate their path. Be rhythmic but not mystical. Connect numbers to concrete insight about timing or cycles.`,
+Name one real shift they should feel coming, tied to actual timing. Use one specific celestial reference (planet, phase, constellation)—make it grounded, not poetic. Tell them what weather they're actually moving into.`,
 
-    'the coins': `You are an I Ching interpreter, reading patterns of change and balance.
+    'the numbers': `Numbers reveal the rhythm underneath. You see patterns, cycles, frequencies—how energy builds and releases.
 
-The seeker is a "${persona}" with "${energy}" energy, seeking guidance for "${timeline}".
+Seeker: ${persona}. Energy: ${energy}. Time focus: ${timeline}.
 
-Generate exactly 2-3 sentences separated by line breaks. Max 50 words. Focus on balance, flow, and the nature of change. Be philosophical but concrete. Avoid "beloved," "cosmic," "sacred," "souls," "whisper," or mystical jargon.`,
+Output: 2-3 sentences, line breaks between each. Max 60 words.
 
-    'the dream': `You are exploring the subconscious through surreal imagery and unexpected connections that somehow make sense.
+Find the number that matches their actual moment (not numerology speak—real patterns in their life right now). What is this number showing them about timing, sequence, or cycle? Ground it in what they're actually building or completing.`,
 
-The seeker is a "${persona}" with "${energy}" energy, seeking guidance for "${timeline}".
+    'the coins': `You interpret change itself—when to act, when to yield, how resistance and flow trade places.
 
-Generate exactly 2-3 sentences separated by line breaks. Max 50 words. Create dreamlike juxtapositions that reveal hidden truth. Be mysterious but not flowery. Avoid generic mystical language—make strange connections that actually land.`,
+Seeker: ${persona}. Energy: ${energy}. Time focus: ${timeline}.
+
+Output: 2-3 sentences, line breaks between each. Max 60 words.
+
+Don't cite I Ching hexagrams. Instead: What does this moment teach about balance? Where are they rigid when they should bend? Where are they soft when they need spine? Speak like someone who's watched power move through systems.`,
+
+    'the dream': `You think in surreal leaps—finding the metaphor embedded in contradiction and strangeness.
+
+Seeker: ${persona}. Energy: ${energy}. Time focus: ${timeline}.
+
+Output: 2-3 sentences, line breaks between each. Max 60 words.
+
+Create one vivid juxtaposition that somehow reveals their situation. Don't be cryptic—be specific. ("You're moving between worlds" = abstract. "You're part mystic, part skeptic, and that friction is your real gift" = the dream made clear). Make it strange but immediately recognizable.`,
   }
 
   return ORACLE_PROMPTS[oracle] || ORACLE_PROMPTS['the stars']
@@ -217,24 +354,56 @@ export async function POST(request: NextRequest) {
     // Get the appropriate prompt for this oracle
     const systemPrompt = getOraclePrompt(lens, character, timeframe, energy)
 
-    // Call Claude API
-    const message = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 300,
-      messages: [
-        {
-          role: 'user',
-          content: 'Generate the fortune now.',
-        },
-      ],
-      system: systemPrompt,
-    })
+    let fortune: string
 
-    // Extract fortune from response
-    const fortune =
-      message.content[0].type === 'text'
-        ? message.content[0].text
-        : 'The oracle fell silent. Try again later.'
+    // Handle "the poets" oracle specially (uses curated quotes instead of AI)
+    if (systemPrompt.startsWith('__POETS_ORACLE__')) {
+      const quotes = loadPoetsQuotes()
+      if (!quotes) {
+        return NextResponse.json(
+          { error: 'Unable to load quote library. Please try again.' },
+          { status: 500 }
+        )
+      }
+
+      // Extract persona, timeline, energy from marker
+      const [, personaPart, timelinePart, energyPart] = systemPrompt.split(':')
+
+      // Get the matching theme for this context
+      const theme = getThemeFromContext(personaPart, timelinePart, energyPart)
+
+      // Select a random quote from the matched theme
+      const selectedQuote = selectRandomQuoteFromTheme(theme, quotes)
+
+      if (!selectedQuote) {
+        return NextResponse.json(
+          { error: 'No quotes available for this theme.' },
+          { status: 500 }
+        )
+      }
+
+      // Format the fortune as: "[Quote text]" —[Author name]
+      fortune = `"${selectedQuote.text}"\n— ${selectedQuote.author}`
+    } else {
+      // Call Claude API for other oracles
+      const message = await client.messages.create({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        messages: [
+          {
+            role: 'user',
+            content: 'Generate the fortune now.',
+          },
+        ],
+        system: systemPrompt,
+      })
+
+      // Extract fortune from response
+      fortune =
+        message.content[0].type === 'text'
+          ? message.content[0].text
+          : 'The oracle fell silent. Try again later.'
+    }
 
     return NextResponse.json({
       success: true,

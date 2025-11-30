@@ -1,0 +1,191 @@
+{
+  "transformation": [
+    {
+      "text": "The wound is the place where the Light enters you.",
+      "author": "Rumi"
+    },
+    {
+      "text": "What the caterpillar calls the end of the world, the master calls a butterfly.",
+      "author": "Richard Bach"
+    },
+    {
+      "text": "We must be willing to let go of the life we planned so as to have the life that is waiting for us.",
+      "author": "Joseph Campbell"
+    },
+    {
+      "text": "Yesterday I was clever, so I wanted to change the world. Today I am wise, so I am changing myself.",
+      "author": "Rumi"
+    }
+  ],
+
+  "courage": [
+    {
+      "text": "Do not be satisfied with the stories that come before you. Unfold your own myth.",
+      "author": "Rumi"
+    },
+    {
+      "text": "Fortune favors the brave.",
+      "author": "Virgil"
+    },
+    {
+      "text": "I am not afraid of storms, for I am learning how to sail my ship.",
+      "author": "Louisa May Alcott"
+    },
+    {
+      "text": "Courage is resistance to fear, mastery of fear—not absence of fear.",
+      "author": "Mark Twain"
+    }
+  ],
+
+  "love": [
+    {
+      "text": "Love is the voice under all silences, the hope which has no opposite in fear.",
+      "author": "E.E. Cummings"
+    },
+    {
+      "text": "The minute I heard my first love story, I started looking for you, not knowing how blind that was. Lovers don't finally meet somewhere. They're in each other all along.",
+      "author": "Rumi"
+    },
+    {
+      "text": "We are shaped and fashioned by what we love.",
+      "author": "Goethe"
+    },
+    {
+      "text": "Keep love in your heart. A life without it is like a sunless garden when the flowers are dead.",
+      "author": "Oscar Wilde"
+    }
+  ],
+
+  "uncertainty": [
+    {
+      "text": "Be patient towards all that is unsolved in your heart and try to love the questions themselves.",
+      "author": "Rainer Maria Rilke"
+    },
+    {
+      "text": "Not all those who wander are lost.",
+      "author": "J.R.R. Tolkien"
+    },
+    {
+      "text": "The only way to make sense out of change is to plunge into it, move with it, and join the dance.",
+      "author": "Alan Watts"
+    },
+    {
+      "text": "Uncertainty is the refuge of hope.",
+      "author": "Henri Frederic Amiel"
+    }
+  ],
+
+  "time": [
+    {
+      "text": "Nature does not hurry, yet everything is accomplished.",
+      "author": "Lao Tzu"
+    },
+    {
+      "text": "How did it get so late so soon?",
+      "author": "Dr. Seuss"
+    },
+    {
+      "text": "Time is a created thing. To say 'I don't have time' is to say 'I don't want to.'",
+      "author": "Lao Tzu"
+    },
+    {
+      "text": "The future is something which everyone reaches at the rate of sixty minutes an hour, whatever he does, whoever he is.",
+      "author": "C.S. Lewis"
+    }
+  ],
+
+  "self": [
+    {
+      "text": "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.",
+      "author": "Ralph Waldo Emerson"
+    },
+    {
+      "text": "I am not what happened to me, I am what I choose to become.",
+      "author": "Carl Jung"
+    },
+    {
+      "text": "Knowing yourself is the beginning of all wisdom.",
+      "author": "Aristotle"
+    },
+    {
+      "text": "The privilege of a lifetime is to become who you truly are.",
+      "author": "Carl Jung"
+    }
+  ],
+
+  "loss": [
+    {
+      "text": "The reality is that you will grieve forever. You will not 'get over' the loss of a loved one; you will learn to live with it.",
+      "author": "Elisabeth Kübler-Ross"
+    },
+    {
+      "text": "What we have once enjoyed we can never lose. All that we love deeply becomes a part of us.",
+      "author": "Helen Keller"
+    },
+    {
+      "text": "Grief is the price we pay for love.",
+      "author": "Queen Elizabeth II"
+    },
+    {
+      "text": "Unable are the loved to die, for love is immortality.",
+      "author": "Emily Dickinson"
+    }
+  ],
+
+  "joy": [
+    {
+      "text": "Let yourself be silently drawn by the strange pull of what you really love. It will not lead you astray.",
+      "author": "Rumi"
+    },
+    {
+      "text": "Find ecstasy in life; the mere sense of living is joy enough.",
+      "author": "Emily Dickinson"
+    },
+    {
+      "text": "The soul should always stand ajar, ready to welcome the ecstatic experience.",
+      "author": "Emily Dickinson"
+    },
+    {
+      "text": "I have spread my dreams under your feet. Tread softly because you tread on my dreams.",
+      "author": "W.B. Yeats"
+    }
+  ],
+
+  "beginnings": [
+    {
+      "text": "Every new beginning comes from some other beginning's end.",
+      "author": "Seneca"
+    },
+    {
+      "text": "What we call the beginning is often the end. And to make an end is to make a beginning.",
+      "author": "T.S. Eliot"
+    },
+    {
+      "text": "There will come a time when you believe everything is finished. That will be the beginning.",
+      "author": "Louis L'Amour"
+    },
+    {
+      "text": "The secret of getting ahead is getting started.",
+      "author": "Mark Twain"
+    }
+  ],
+
+  "endings": [
+    {
+      "text": "Nothing is lost. Everything is transformed.",
+      "author": "Michael Ende"
+    },
+    {
+      "text": "Every exit is an entry somewhere else.",
+      "author": "Tom Stoppard"
+    },
+    {
+      "text": "Goodbyes are only for those who love with their eyes. Because for those who love with heart and soul there is no such thing as separation.",
+      "author": "Rumi"
+    },
+    {
+      "text": "The end is where we start from.",
+      "author": "T.S. Eliot"
+    }
+  ]
+}

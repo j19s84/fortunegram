@@ -15,106 +15,28 @@ html {
 }
 
 body {
-  @apply text-neutral-950;
+  @apply text-white;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-  background: #ffffff;
-  transform: scale(0.75);
-  transform-origin: top center;
-  margin-bottom: -6.25vh;
+  background: #000000;
 }
 
-/* Animated gradient blob background */
-body::before {
-  content: '';
-  position: fixed;
-  width: 35vw;
-  height: 35vw;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(200, 180, 230, 0.8) 0%,
-    rgba(180, 150, 220, 0.6) 25%,
-    rgba(160, 120, 210, 0.4) 50%,
-    rgba(140, 100, 200, 0.3) 75%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  filter: blur(60px);
-  z-index: -1;
-  animation: blobFloat 28s ease-in-out infinite;
-  pointer-events: none;
-}
-
-/* Blob floating animation - smooth, meditative movement */
-@keyframes blobFloat {
-  0% {
-    top: 5%;
-    left: 5%;
-    transform: scale(1);
-  }
-  25% {
-    top: 55%;
-    left: 75%;
-    transform: scale(1.2);
-  }
-  50% {
-    top: 70%;
-    left: 15%;
-    transform: scale(0.95);
-  }
-  75% {
-    top: 25%;
-    left: 80%;
-    transform: scale(1.1);
-  }
-  100% {
-    top: 5%;
-    left: 5%;
-    transform: scale(1);
-  }
-}
-
-/* Mobile blob animation - slower and smaller movement */
-@media (max-width: 768px) {
-  body::before {
-    width: 50vw;
-    height: 50vw;
-    animation: blobFloatMobile 24s ease-in-out infinite;
-  }
-
-  @keyframes blobFloatMobile {
-    0% {
-      top: 10%;
-      left: 50%;
-      transform: translate(-50%, 0) scale(1);
-    }
-    50% {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, 0) scale(1.1);
-    }
-    100% {
-      top: 10%;
-      left: 50%;
-      transform: translate(-50%, 0) scale(1);
-    }
-  }
-}
 
 /* Subtle accent divider */
 .divider {
   @apply h-px bg-neutral-200;
 }
 
-/* Glassmorphic card style */
+/* Glassmorphic card style - Dark Mode */
 .card {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   position: relative;
   z-index: 1;
@@ -125,9 +47,9 @@ body::before {
 }
 
 .card:hover {
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10), inset 0 1px 1px rgba(255, 255, 255, 1);
-  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Premium button styles */
@@ -154,21 +76,21 @@ body::before {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  @apply text-neutral-900;
-  border: 1.5px solid rgba(102, 126, 234, 0.3);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  @apply text-white;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.1);
   position: relative;
   z-index: 1;
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.85);
-  border-color: rgba(102, 126, 234, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.15);
 }
 
 .btn-secondary:active {
